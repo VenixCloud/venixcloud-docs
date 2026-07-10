@@ -1,0 +1,91 @@
+---
+title: "VenixCloud REST API Reference"
+sidebarTitle: "Introduction"
+description: "The VenixCloud REST API lets you create, manage, and monitor your hosted services programmatically. Base URL: https://api.venixcloud.com/v1."
+---
+
+The VenixCloud REST API gives you full programmatic control over your hosted databases, bots, websites, and custom applications. You can create and manage services, trigger deployments, monitor status, and automate any workflow that you would otherwise perform through the dashboard — all over standard HTTPS using JSON.
+
+## Base URL
+
+All API requests are made to the following base URL. Every endpoint in this reference is relative to it.
+
+```
+https://api.venixcloud.com/v1
+```
+
+## Authentication
+
+Every request to the VenixCloud API must include a valid API key in the `Authorization` header using the Bearer scheme.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+See the [Authentication guide](/api-reference/authentication) for instructions on generating and managing your API keys.
+
+## Content Type
+
+All request bodies must be sent as JSON, and all responses are returned as JSON. Include the `Content-Type` header on any request that sends a body.
+
+```
+Content-Type: application/json
+```
+
+## Versioning
+
+The current API version is `v1`, reflected in the base URL. VenixCloud maintains backward compatibility within a version. When a breaking change is necessary, a new version is released (for example, `v2`) and the previous version is kept available for a deprecation period with advance notice.
+
+## Rate Limits
+
+Rate limits are applied per API key and reset every 60 seconds. If you exceed your plan's limit, the API returns a `429 Too Many Requests` response.
+
+| Plan       | Requests / Minute |
+|------------|-------------------|
+| Free       | 60                |
+| Starter    | 150               |
+| Pro        | 300               |
+| Business   | 1000              |
+
+## Quick Example
+
+The following example retrieves a list of all services on your account.
+
+```bash
+curl -X GET https://api.venixcloud.com/v1/services \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+A successful response returns a `data` array containing your services alongside a `total` count.
+
+```json
+{
+  "data": [
+    {
+      "id": "svc_abc123",
+      "name": "my-postgres-db",
+      "type": "database",
+      "status": "running",
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+## Explore the API
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Learn how to generate API keys and authenticate every request securely.
+  </Card>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    Understand HTTP status codes, error response shapes, and retry strategies.
+  </Card>
+  <Card title="Services" icon="server" href="/api-reference/services">
+    Create, list, update, and delete your hosted databases, bots, and websites.
+  </Card>
+  <Card title="Deployments" icon="rocket" href="/api-reference/deployments">
+    Trigger and monitor deployments for any service on your account.
+  </Card>
+</CardGroup>

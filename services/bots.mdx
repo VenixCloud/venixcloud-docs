@@ -1,0 +1,63 @@
+---
+title: "Bot Hosting on VenixCloud"
+sidebarTitle: "Bots"
+description: "Deploy Discord, Telegram, and custom bots on VenixCloud. Keep your bot online 24/7 with managed hosting, logs, and automatic restarts."
+---
+
+VenixCloud keeps your bots running around the clock without you having to babysit a server. Deploy your bot code from a GitHub repository or a ZIP archive, set your environment variables, and VenixCloud handles the rest — uptime monitoring, automatic restarts on crash, and real-time log streaming so you always know what your bot is doing.
+
+## Supported Bot Types
+
+- **Discord bots** — Build rich Discord experiences using libraries like discord.js or discord.py. VenixCloud supports both gateway (WebSocket) bots and interaction-based slash-command bots.
+- **Telegram bots** — Deploy polling-based or webhook-based Telegram bots built with libraries such as python-telegram-bot, Grammy, or Telegraf.
+- **WhatsApp bots** — Host WhatsApp automation and business messaging bots using the official Cloud API or community libraries like Baileys.
+- **Custom HTTP bots** — Any bot or automation that communicates over HTTP (webhooks, REST callbacks, scheduled tasks) can be hosted as a custom bot service.
+
+## Creating a Bot Service
+
+<Steps>
+  <Step title="Open the New Service wizard">
+    Log in to your VenixCloud dashboard, click **New Service**, and select **Bot** from the service type list.
+  </Step>
+  <Step title="Choose a runtime">
+    Select the language runtime your bot is written in. VenixCloud supports Node.js and Python out of the box — pick the version that matches your local development environment.
+  </Step>
+  <Step title="Connect your source code">
+    Either connect your **GitHub repository** (VenixCloud will pull the latest commit on every deploy) or upload a **ZIP archive** of your project. Make sure your `package.json` or `requirements.txt` is at the root of the project so VenixCloud can install dependencies automatically.
+  </Step>
+  <Step title="Set environment variables">
+    Add your bot token and any other sensitive values as environment variables in the **Environment** tab. VenixCloud encrypts these values at rest and injects them into your runtime at startup.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy**. VenixCloud installs dependencies, starts your bot process, and confirms it is running. The service card on your dashboard will show a green **Online** badge once the bot is live.
+  </Step>
+</Steps>
+
+## Environment Variables
+
+<Note>
+  Always store your bot token and any other secrets — API keys, database passwords, webhook secrets — as environment variables. Never hardcode sensitive values directly in your source code or commit them to a repository. VenixCloud encrypts all environment variables at rest and they are never exposed in build logs.
+</Note>
+
+Set environment variables from the **Environment** tab of your bot service. Changes take effect on the next deploy or restart.
+
+## Supported Runtimes
+
+| Runtime    | Available Versions |
+|------------|--------------------|
+| Node.js    | 18 (LTS), 20 (LTS) |
+| Python     | 3.10, 3.11         |
+
+If your bot requires a runtime not listed above, consider using a [Custom App](/services/custom-apps) service with a Docker image of your choice.
+
+## Automatic Restarts
+
+VenixCloud monitors your bot process continuously. If the process exits unexpectedly — due to an unhandled exception, an out-of-memory error, or any other reason — VenixCloud automatically restarts it within seconds using an exponential back-off strategy to avoid restart loops. You will see a **Restarted** event in the service timeline so you can investigate the root cause.
+
+## Logs
+
+Real-time logs for your bot are available directly in the VenixCloud dashboard. Open your bot service and click the **Logs** tab to tail the live output stream, or search and filter historical log entries. For more advanced log management, including log export and alerting, see the [Logs & Monitoring](/management/logs-monitoring) guide.
+
+<Tip>
+  Ready to ship your first bot? Follow the step-by-step walkthrough in the [Deploy a Bot](/guides/deploy-a-bot) guide to go from zero to a live, online bot in under five minutes.
+</Tip>

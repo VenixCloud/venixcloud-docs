@@ -1,0 +1,121 @@
+---
+title: "Deploy a Website or Web App on VenixCloud"
+sidebarTitle: "Deploy a Website"
+description: "Learn how to deploy a static site or dynamic web app on VenixCloud, configure your build settings, and go live with a free HTTPS subdomain."
+---
+
+VenixCloud makes it easy to deploy anything from a plain HTML page to a full-stack Node.js application. Connect your repository, set a build command, and your site is live on a free HTTPS subdomain within minutes — no server configuration required.
+
+## Supported Frameworks
+
+VenixCloud supports a wide range of frontend and backend frameworks out of the box:
+
+- **React** — Create React App, Vite
+- **Vue** — Vue CLI, Vite
+- **Next.js** — with static export or Node.js server
+- **Nuxt** — static or SSR mode
+- **Plain HTML** — no build step needed
+- **PHP** — served directly
+- **Node.js apps** — Express, Fastify, Hapi, and more
+
+## Deploy Your Site
+
+<Tabs>
+  <Tab title="Static Site">
+    Use this path for React, Vue, plain HTML, or any framework that compiles to static files.
+
+    <Steps>
+      <Step title="Create the service">
+        In your VenixCloud Dashboard, click **New Service** and select **Website**. Choose **Static Site** as the deployment type.
+      </Step>
+
+      <Step title="Connect your repository">
+        Link your **GitHub repository** or upload a **ZIP archive** of your project. VenixCloud will clone the repo and prepare the build environment.
+      </Step>
+
+      <Step title="Configure build settings">
+        Set the **Build Command** and **Output Directory** that match your framework. Refer to the [Build Settings Reference](#build-settings-reference) table below if you're unsure which values to use.
+      </Step>
+
+      <Step title="Deploy">
+        Click **Deploy**. VenixCloud runs your build command, serves the output directory, and assigns your site a public HTTPS URL. The status indicator turns green when the deployment is live.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Node.js App">
+    Use this path for dynamic Node.js applications such as Express or Fastify APIs and server-side-rendered apps.
+
+    <Steps>
+      <Step title="Create the service">
+        In your VenixCloud Dashboard, click **New Service** and select **Website**. Choose **Node.js App** as the deployment type.
+      </Step>
+
+      <Step title="Connect your repository">
+        Link your **GitHub repository** or upload a **ZIP archive**. VenixCloud automatically runs `npm install` (or `yarn install` / `pnpm install`) to restore dependencies.
+      </Step>
+
+      <Step title="Set the start command">
+        Under **Settings**, enter the command VenixCloud should use to start your server — for example:
+
+        ```bash
+        node server.js
+        ```
+
+        or, if you have a `start` script in `package.json`:
+
+        ```bash
+        npm start
+        ```
+      </Step>
+
+      <Step title="Set the PORT environment variable">
+        Navigate to the **Environment** tab and add the following variable:
+
+        | Key | Value |
+        |-----|-------|
+        | `PORT` | `3000` |
+
+        Make sure your app listens on `process.env.PORT` so VenixCloud can route traffic to it correctly:
+
+        ```js
+        const port = process.env.PORT || 3000;
+        app.listen(port);
+        ```
+      </Step>
+
+      <Step title="Deploy">
+        Click **Deploy** and wait for the status to show **Running**. Your app is now live on a public HTTPS URL.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Build Settings Reference
+
+Use the table below to find the correct build command and output directory for your framework.
+
+| Framework | Build Command | Output Directory |
+|-----------|--------------|-----------------|
+| React | `npm run build` | `build` |
+| Vue | `npm run build` | `dist` |
+| Next.js | `npm run build` | `.next` |
+| Plain HTML | _(none)_ | `/` |
+
+## Your URL
+
+After a successful deployment, your site is accessible at:
+
+```
+https://yourapp.venixcloud.app
+```
+
+The subdomain is derived from your **service name** — for example, a service named `my-portfolio` becomes `my-portfolio.venixcloud.app`. You can rename your service in **Settings** at any time; a new subdomain will be issued immediately.
+
+## Custom Domain
+
+Want to use your own domain name instead of the default subdomain? You can attach a custom domain to any VenixCloud website service. See the [Custom Domains guide](/guides/custom-domains) for step-by-step instructions.
+
+<Tip>
+  If your frontend needs to talk to a backend API, store the API base URL as an environment variable — for example, `VITE_API_URL` or `REACT_APP_API_URL` — rather than hardcoding it. This makes it easy to swap endpoints between staging and production without changing your code.
+</Tip>

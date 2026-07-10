@@ -1,0 +1,114 @@
+---
+title: "Managing Deployments on VenixCloud"
+sidebarTitle: "Deployments"
+description: "Understand how VenixCloud deployments work, how to trigger new deployments, roll back to a previous version, and check deployment status."
+---
+
+A deployment on VenixCloud is the process of taking your code or configuration and making it live on the platform. Every time you push a change, click the deploy button, or call the API, VenixCloud creates a discrete, versioned deployment record so you always have a clear history of what is running and when it was last changed.
+
+## Deployment Lifecycle
+
+Each deployment moves through a series of stages from the moment it is triggered to when your service is live.
+
+| Stage | Description |
+|---|---|
+| **Queued** | The deployment request has been accepted and is waiting for an available build runner. |
+| **Building** | VenixCloud is pulling your source, installing dependencies, and producing a runnable image or artifact. |
+| **Deploying** | The build artifact is being rolled out to the target infrastructure. Traffic is not yet switched. |
+| **Running** | The deployment succeeded. Your service is live and receiving traffic. |
+| **Failed** | An error occurred at one of the earlier stages. The previous running version remains active. |
+
+<Note>
+  Deployment duration varies by service type. A static website typically deploys in under 30 seconds, while a database migration or large custom application can take several minutes.
+</Note>
+
+## Triggering a Deployment
+
+There are three ways to start a new deployment.
+
+### Dashboard
+
+<Steps>
+  <Step title="Open the service">
+    Navigate to **Dashboard → Services** and click the name of the service you want to deploy.
+  </Step>
+  <Step title="Click Deploy">
+    In the service detail view, click the **Deploy** button in the top-right corner.
+  </Step>
+  <Step title="Monitor progress">
+    The deployment panel updates in real time, moving through each lifecycle stage. Click **View logs** to follow the build output as it streams.
+  </Step>
+</Steps>
+
+### Push to a Connected GitHub Repository (Auto-deploy)
+
+If you have connected a GitHub repository and enabled auto-deploy, every push to your configured branch (for example, `main`) automatically triggers a new deployment. See [Auto-deploy from GitHub](#auto-deploy-from-github) for setup instructions.
+
+### API Call
+
+You can trigger a deployment programmatically using the VenixCloud REST API.
+
+```bash
+curl -X POST https://api.venixcloud.com/v1/services/{service_id}/deploy \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Replace `{service_id}` with the ID shown on your service detail page and `YOUR_API_KEY` with a key generated under **Settings → API Keys**.
+
+## Deployment History
+
+VenixCloud keeps a full log of every deployment for each service so you can audit changes and diagnose regressions.
+
+<Steps>
+  <Step title="Open the service">
+    Go to **Dashboard → Services** and click the service you want to inspect.
+  </Step>
+  <Step title="Open the Deployments tab">
+    Select the **Deployments** tab inside the service detail view.
+  </Step>
+  <Step title="Browse and inspect">
+    Each entry shows the deployment ID, trigger type (manual, auto-deploy, API), timestamp, duration, and final status. Click any row to expand its full build and deploy log.
+  </Step>
+</Steps>
+
+## Rollback
+
+If a recent deployment introduces a problem, you can instantly revert to any previous successful deployment.
+
+<Steps>
+  <Step title="Go to Deployment History">
+    Open the service and navigate to the **Deployments** tab.
+  </Step>
+  <Step title="Find the target version">
+    Locate the last known-good deployment in the list. Successful deployments are marked with a green **Running** badge.
+  </Step>
+  <Step title="Initiate the rollback">
+    Click the **⋮** menu on that deployment row and select **Rollback to this version**.
+  </Step>
+  <Step title="Confirm">
+    Review the deployment ID and timestamp in the confirmation dialog, then click **Confirm Rollback**. VenixCloud immediately begins promoting that version back into service.
+  </Step>
+</Steps>
+
+<Note>
+  A rollback is treated as a new deployment event. It appears in your deployment history and follows the same Queued → Building → Deploying → Running lifecycle.
+</Note>
+
+## Auto-deploy from GitHub
+
+Connecting a GitHub repository lets VenixCloud automatically deploy your service every time you push to a chosen branch.
+
+<Steps>
+  <Step title="Open Service Settings">
+    Go to **Dashboard → Services**, click your service, and select the **Settings** tab.
+  </Step>
+  <Step title="Connect a repository">
+    Under **Source Control**, click **Connect GitHub Repo**. Authorize the VenixCloud GitHub App when prompted, then select the repository and branch you want to deploy from.
+  </Step>
+  <Step title="Enable auto-deploy">
+    Toggle **Auto-deploy on push** to on. You can also choose whether to deploy on pushes to all branches or only the selected one.
+  </Step>
+  <Step title="Save and test">
+    Click **Save**. Push a small commit to your branch to confirm that a new deployment is triggered automatically.
+  </Step>
+</Steps>

@@ -1,0 +1,77 @@
+---
+title: "API Error Codes and Responses"
+sidebarTitle: "Errors"
+description: "Understand VenixCloud API HTTP status codes, error response format, and how to handle common errors in your application."
+---
+
+When a request cannot be completed, the VenixCloud API returns an appropriate HTTP status code along with a JSON body that describes exactly what went wrong. Every error response follows the same structure, making it easy to handle failures consistently across your application regardless of the endpoint or error type.
+
+## Error Response Format
+
+All error responses include an `error` object containing a machine-readable `code`, a human-readable `message`, and the corresponding HTTP `status` code.
+
+```json
+{
+  "error": {
+    "code": "SERVICE_NOT_FOUND",
+    "message": "The requested service does not exist.",
+    "status": 404
+  }
+}
+```
+
+<ResponseField name="error.code" type="string">
+  A constant, uppercase string that identifies the specific error type. Use this field for programmatic error handling.
+</ResponseField>
+
+<ResponseField name="error.message" type="string">
+  A plain-English description of the error intended for developers. Do not display this string directly to end users.
+</ResponseField>
+
+<ResponseField name="error.status" type="number">
+  The HTTP status code associated with the error, mirrored inside the body for convenience.
+</ResponseField>
+
+## HTTP Status Codes
+
+The API uses standard HTTP status codes to indicate the outcome of every request.
+
+| Status | Meaning                                                       |
+|--------|---------------------------------------------------------------|
+| 200    | Success — the request completed as expected.                  |
+| 201    | Resource created — a new resource was successfully created.   |
+| 400    | Bad request — the request was malformed or had invalid parameters. |
+| 401    | Unauthorized — the API key is missing, invalid, or revoked.   |
+| 403    | Forbidden — the API key does not have permission for this action. |
+| 404    | Not found — the requested resource does not exist.            |
+| 409    | Conflict — the request conflicts with the current state of the resource. |
+| 422    | Unprocessable entity — the request was well-formed but failed validation. |
+| 429    | Too many requests — you have exceeded the rate limit.         |
+| 500    | Internal server error — an unexpected error occurred on VenixCloud's end. |
+
+## Common Error Codes
+
+The table below lists the error codes you are most likely to encounter, along with their associated HTTP status and a description of when they occur.
+
+| Code                      | Status | Description                                                                 |
+|---------------------------|--------|-----------------------------------------------------------------------------|
+| `INVALID_API_KEY`         | 401    | The API key is missing, malformed, or has been revoked.                     |
+| `SERVICE_NOT_FOUND`       | 404    | The service ID does not exist or does not belong to your account.           |
+| `PLAN_LIMIT_REACHED`      | 403    | You have reached the maximum number of services allowed on your current plan. |
+| `VALIDATION_ERROR`        | 422    | One or more request fields failed validation. Check the `message` field for details. |
+| `RATE_LIMIT_EXCEEDED`     | 429    | You have sent too many requests in a short period. Slow down and retry.     |
+| `DEPLOYMENT_IN_PROGRESS`  | 409    | A deployment is already running for this service. Wait for it to finish before triggering another. |
+
+## Handling Rate Limits
+
+<Note>
+  When you receive a `429 Too Many Requests` response, check the `Retry-After` response header. It contains the number of seconds you should wait before sending the next request. Retrying immediately without respecting this header will continue to return `429` responses.
+</Note>
+
+A simple retry strategy using exponential backoff also works well if you prefer not to parse the header directly. Start with a short delay and double it on each subsequent `429` until the request succeeds or you reach a maximum retry count.
+
+## Debugging Errors
+
+<Tip>
+  Always log the full error response body — including the `code`, `message`, and `status` fields — when you encounter an unexpected failure. The `code` field in particular will help you quickly identify the root cause and find the relevant section of this reference.
+</Tip>

@@ -1,0 +1,72 @@
+---
+title: "Website Hosting on VenixCloud"
+sidebarTitle: "Websites"
+description: "Host static sites and dynamic web applications on VenixCloud. Get a free subdomain, SSL certificate, and optional custom domain."
+---
+
+VenixCloud gives you a fast, reliable home for every kind of web project — from a simple static landing page to a full-stack dynamic application. Connect your GitHub repository or upload your files, configure a build command if needed, and VenixCloud deploys your site with a free subdomain and HTTPS enabled by default. No reverse proxy configuration, no certificate renewal, no server maintenance required.
+
+## Website Types
+
+VenixCloud supports four categories of web project:
+
+- **Static sites (HTML / CSS / JS)** — Pre-built files served directly from VenixCloud's global CDN. Perfect for marketing sites, documentation, portfolios, and any front-end framework that outputs static assets.
+- **Node.js applications** — Dynamic server-side applications built with Express, Fastify, Next.js (SSR mode), Nuxt, or any other Node.js framework.
+- **Python applications** — WSGI and ASGI apps built with Django, Flask, FastAPI, and similar frameworks.
+- **PHP applications** — Traditional and modern PHP applications, including Laravel and WordPress.
+
+## Creating a Website
+
+<Steps>
+  <Step title="Open the New Service wizard">
+    Log in to your VenixCloud dashboard, click **New Service**, and select **Website** from the service type list.
+  </Step>
+  <Step title="Choose your website type">
+    Select the type that matches your project: **Static**, **Node.js**, **Python**, or **PHP**. This tells VenixCloud which build toolchain and runtime environment to use.
+  </Step>
+  <Step title="Connect your source code">
+    Connect your **GitHub repository** for continuous deployment — VenixCloud will automatically redeploy whenever you push to your production branch. Alternatively, upload a **ZIP archive** of your project for a one-off deploy.
+  </Step>
+  <Step title="Configure build settings">
+    For static sites and compiled frameworks, set the **Build Command** (e.g. `npm run build`) and the **Output Directory** (e.g. `dist` or `out`). For server-side apps, set the **Start Command** that launches your server process. See the [Build Settings](#build-settings) table below for common examples.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy**. VenixCloud runs your build, publishes the output, and assigns your free subdomain. Once the status turns green your site is live and accessible over HTTPS.
+  </Step>
+</Steps>
+
+## Free Subdomain
+
+Every website deployed on VenixCloud is instantly reachable at a free subdomain:
+
+```
+yourapp.venixcloud.app
+```
+
+The subdomain is derived from your service name and is available immediately after your first successful deploy. You can rename the service at any time from **Settings > General** to change the subdomain.
+
+## SSL / HTTPS
+
+HTTPS is enabled by default on every VenixCloud website. Certificates are provisioned automatically via **Let's Encrypt** and renewed before they expire — you never need to manage certificates manually. All HTTP traffic is automatically redirected to HTTPS.
+
+## Custom Domains
+
+You can attach one or more custom domains to your website and VenixCloud will provision a certificate for each one automatically. For full instructions on adding a custom domain and updating your DNS records, see the [Custom Domains](/guides/custom-domains) guide.
+
+## Build Settings
+
+Use the table below as a reference for common frameworks. All values are set in the **Build & Deploy** tab of your website service.
+
+| Framework      | Build Command          | Output Directory | Start Command             |
+|----------------|------------------------|------------------|---------------------------|
+| Next.js (SSR)  | `npm run build`        | —                | `npm run start`           |
+| Next.js (static) | `npm run build`      | `out`            | —                         |
+| React (CRA)    | `npm run build`        | `build`          | —                         |
+| Vue (Vite)     | `npm run build`        | `dist`           | —                         |
+| Plain HTML/CSS | —                      | `.` (root)       | —                         |
+| Django         | `pip install -r requirements.txt` | — | `gunicorn myapp.wsgi`   |
+| Laravel        | `composer install`     | `public`         | —                         |
+
+<Tip>
+  Looking for a detailed walkthrough? The [Deploy Your First Website](/guides/deploy-a-website) guide takes you step-by-step through deploying a Next.js app with a custom domain and environment variables.
+</Tip>

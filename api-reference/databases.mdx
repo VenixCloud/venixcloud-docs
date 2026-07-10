@@ -1,0 +1,192 @@
+---
+title: "REST API Endpoints for Databases"
+sidebarTitle: "Databases"
+description: "API endpoints to list and create database services on VenixCloud. Supports MySQL, PostgreSQL, MongoDB, and Redis."
+---
+
+The Databases API lets you provision and manage fully hosted database services on VenixCloud. You can spin up a MySQL, PostgreSQL, MongoDB, or Redis instance in seconds without managing any underlying infrastructure. VenixCloud automatically generates a ready-to-use connection string and handles availability, backups, and scaling for you. All requests require a valid API key passed in the `Authorization` header.
+
+---
+
+## List All Databases
+
+Retrieve every database service currently associated with your account. The response includes engine details and live connection strings so you can immediately integrate with your applications.
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://api.venixcloud.com/v1/databases \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+**Status: `200 OK`**
+
+```json
+{
+  "data": [
+    {
+      "id": "db_k9m2x1",
+      "name": "production-postgres",
+      "engine": "postgresql",
+      "version": "15",
+      "status": "running",
+      "connection_string": "postgresql://admin:password@db-k9m2x1.venixcloud.com:5432/appdb"
+    },
+    {
+      "id": "db_r3t7z8",
+      "name": "cache-redis",
+      "engine": "redis",
+      "version": "7.2",
+      "status": "running",
+      "connection_string": "redis://:password@db-r3t7z8.venixcloud.com:6379"
+    }
+  ],
+  "total": 2
+}
+```
+
+<ResponseField name="data" type="array">
+  An array of database service objects.
+
+  <Expandable title="Database object fields">
+    <ResponseField name="id" type="string">
+      The unique identifier for the database, prefixed with `db_`.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      The human-readable name assigned to the database service.
+    </ResponseField>
+    <ResponseField name="engine" type="string">
+      The database engine in use. One of `mysql`, `postgresql`, `mongodb`, or `redis`.
+    </ResponseField>
+    <ResponseField name="version" type="string">
+      The engine version running on this instance, e.g. `8.0`, `15`, or `7.2`.
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      The current operational state. One of `running`, `stopped`, `provisioning`, or `failed`.
+    </ResponseField>
+    <ResponseField name="connection_string" type="string">
+      The fully formed connection URI you can use directly in your application code or database client.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="total" type="integer">
+  The total number of database services returned.
+</ResponseField>
+
+---
+
+## Create a Database
+
+Provision a new database service by specifying the engine, version, region, and credentials. VenixCloud sets up the instance, applies your configuration, and returns a connection string once the database reaches `running` status.
+
+<Tip>
+  Store your `password` securely in your application's environment variables immediately after creation. VenixCloud will not expose the plaintext password again in subsequent API responses.
+</Tip>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.venixcloud.com/v1/databases \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "production-postgres",
+    "engine": "postgresql",
+    "version": "15",
+    "region": "sa-east-1",
+    "db_name": "appdb",
+    "username": "admin",
+    "password": "s3cur3P@ssword!"
+  }'
+```
+
+</CodeGroup>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  A unique name for your database service. Used for identification in the dashboard and API responses.
+</ParamField>
+
+<ParamField body="engine" type="string" required>
+  The database engine to provision. Accepted values are `mysql`, `postgresql`, `mongodb`, and `redis`.
+</ParamField>
+
+<ParamField body="version" type="string">
+  The engine version to use. Examples: `8.0` for MySQL, `15` for PostgreSQL, `7.0` for MongoDB, `7.2` for Redis. Defaults to the latest stable release if omitted.
+</ParamField>
+
+<ParamField body="region" type="string" required>
+  The region where the database will be hosted. Accepted values are `sa-east-1` and `us-east-1`.
+</ParamField>
+
+<ParamField body="db_name" type="string">
+  The name of the initial database or collection to create inside the instance. Defaults to `main` if not provided. Not applicable for Redis.
+</ParamField>
+
+<ParamField body="username" type="string">
+  The username for the primary database user. Defaults to `admin` if not provided. Not applicable for Redis.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The password for the primary database user. Must be at least 12 characters and contain a mix of letters, numbers, and symbols.
+</ParamField>
+
+### Response
+
+**Status: `201 Created`**
+
+```json
+{
+  "id": "db_k9m2x1",
+  "name": "production-postgres",
+  "engine": "postgresql",
+  "version": "15",
+  "status": "provisioning",
+  "region": "sa-east-1",
+  "db_name": "appdb",
+  "username": "admin",
+  "connection_string": "postgresql://admin:s3cur3P@ssword!@db-k9m2x1.venixcloud.com:5432/appdb",
+  "created_at": "2024-03-12T14:00:00Z"
+}
+```
+
+<ResponseField name="id" type="string">
+  The unique identifier for the newly created database, prefixed with `db_`.
+</ResponseField>
+<ResponseField name="name" type="string">
+  The name you provided in the request.
+</ResponseField>
+<ResponseField name="engine" type="string">
+  The database engine that was provisioned.
+</ResponseField>
+<ResponseField name="version" type="string">
+  The engine version in use.
+</ResponseField>
+<ResponseField name="status" type="string">
+  Always `provisioning` immediately after creation. Transitions to `running` once the database is ready to accept connections.
+</ResponseField>
+<ResponseField name="region" type="string">
+  The region the database was deployed to.
+</ResponseField>
+<ResponseField name="db_name" type="string">
+  The name of the initial database or collection created.
+</ResponseField>
+<ResponseField name="username" type="string">
+  The primary database user created alongside the instance.
+</ResponseField>
+<ResponseField name="connection_string" type="string">
+  The fully formed connection URI ready for use in your application. Save this value securely.
+</ResponseField>
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the database service was created.
+</ResponseField>
+
+<Note>
+  The `connection_string` returned here contains the plaintext password you submitted. Treat this response payload as sensitive and avoid logging it. In subsequent `GET` requests the password portion of the connection string will be masked.
+</Note>

@@ -1,0 +1,81 @@
+---
+title: "Authenticate with the VenixCloud API"
+sidebarTitle: "Authentication"
+description: "Learn how to generate and use API keys to authenticate requests to the VenixCloud REST API using the Authorization header."
+---
+
+VenixCloud uses API keys to authenticate requests. Every call to the API must include your key in the `Authorization` header. Keys are tied to your account and can be scoped to limit what actions they can perform, making it straightforward to issue least-privilege credentials for different services or team members.
+
+## Getting an API Key
+
+<Steps>
+  <Step title="Log in to your VenixCloud account">
+    Visit [venixcloud.com](https://venixcloud.com) and sign in with your credentials.
+  </Step>
+  <Step title="Open API Keys settings">
+    Navigate to **Settings** in the top-right menu, then select **API Keys** from the sidebar.
+  </Step>
+  <Step title="Generate a new key">
+    Click **Generate new key**. Enter a descriptive name that identifies where or how the key will be used (for example, `production-deploy-bot` or `monitoring-readonly`). Choose the appropriate scope before confirming.
+  </Step>
+  <Step title="Copy your key immediately">
+    Your new API key is displayed **only once**. Copy it and store it somewhere secure such as a password manager or secrets vault — you will not be able to view it again after closing the dialog.
+  </Step>
+</Steps>
+
+## Using the API Key
+
+Pass your API key as a Bearer token in the `Authorization` header of every request.
+
+```bash
+curl -X GET https://api.venixcloud.com/v1/services \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+Requests made without a valid key, or with a revoked key, receive a `401 Unauthorized` response.
+
+## Scopes
+
+When generating a key you select one of two permission scopes that control what the key is allowed to do.
+
+| Scope       | Description                                                                 |
+|-------------|-----------------------------------------------------------------------------|
+| Read-only   | The key can retrieve data (GET requests) but cannot create, update, or delete resources. |
+| Full access | The key can perform all operations including creating services and triggering deployments. |
+
+Select the most restrictive scope that satisfies your use case. For example, a monitoring script only needs read-only access, whereas a deployment pipeline requires full access.
+
+## Revoking Keys
+
+If a key is compromised or no longer needed, revoke it immediately.
+
+1. Go to **Settings** > **API Keys**.
+2. Find the key you want to remove and click **Revoke** next to it.
+3. Confirm the action in the dialog.
+
+Revoked keys stop working immediately — any in-flight request using that key will receive a `401 Unauthorized` response.
+
+## Security Best Practices
+
+<Warning>
+  Never hard-code API keys directly in your source code or commit them to version control. If a key is accidentally exposed in a public repository, revoke it immediately and generate a replacement.
+</Warning>
+
+Follow these practices to keep your keys secure:
+
+- **Use environment variables** — store keys in environment variables (for example, `VENIXCLOUD_API_KEY`) and read them at runtime.
+- **Rotate keys periodically** — generate a new key and retire the old one on a regular schedule.
+- **Use scoped keys** — issue separate read-only keys for services that only need to read data.
+- **Audit key usage** — review the API Keys page regularly and revoke any keys that are no longer in use.
+
+## Key Format
+
+VenixCloud API keys follow a predictable format so you can identify them easily in logs or secret-scanning tools.
+
+| Environment | Prefix        | Example                          |
+|-------------|---------------|----------------------------------|
+| Live        | `vx_live_`    | `vx_live_xxxxxxxxxxxxx`          |
+| Sandbox     | `vx_test_`    | `vx_test_xxxxx`                  |
+
+Live keys interact with your real services and data. Sandbox keys are intended for development and testing and operate against an isolated environment that does not affect production resources.

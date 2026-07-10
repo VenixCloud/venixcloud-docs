@@ -1,0 +1,59 @@
+---
+title: "Set Up a Custom Domain on VenixCloud"
+sidebarTitle: "Custom Domains"
+description: "Configure a custom domain for your VenixCloud website or app. Add DNS records, verify ownership, and enable automatic HTTPS in minutes."
+---
+
+Every VenixCloud service gets a free `yourapp.venixcloud.app` subdomain, but you can replace it — or supplement it — with any domain you own. VenixCloud handles SSL certificate provisioning automatically, so your custom domain is served over HTTPS at no extra cost.
+
+## Prerequisites
+
+- A registered domain name (purchased through any domain registrar)
+- Access to your domain's DNS settings (through your registrar or a DNS provider like Cloudflare)
+
+## Configure Your Custom Domain
+
+<Steps>
+  <Step title="Add the domain in your Dashboard">
+    Open your service in the VenixCloud Dashboard and navigate to **Settings → Custom Domain**. Enter the domain or subdomain you want to use — for example, `www.example.com` or `app.example.com` — and click **Add Domain**.
+  </Step>
+
+  <Step title="Add the DNS record at your registrar">
+    VenixCloud will display the DNS record you need to add. Log in to your domain registrar or DNS provider and create the following record:
+
+    | Type | Name | Value | TTL |
+    |------|------|-------|-----|
+    | CNAME | `www` (or `@` for apex) | `yourapp.venixcloud.app` | 300 |
+
+    Replace `yourapp.venixcloud.app` with the exact default subdomain shown in your Dashboard. Save the record once added.
+  </Step>
+
+  <Step title="Wait for DNS propagation">
+    DNS changes can take anywhere from a few minutes to 48 hours to propagate worldwide, depending on your previous TTL and your registrar. Most changes take effect within 5–15 minutes. You can check propagation progress using a tool like [dnschecker.org](https://dnschecker.org).
+  </Step>
+
+  <Step title="Verify the domain">
+    Return to your VenixCloud Dashboard. Once the DNS record is detected, the domain status changes to **Verified**. VenixCloud begins provisioning a Let's Encrypt SSL certificate for your domain automatically — no action required on your part.
+  </Step>
+
+  <Step title="SSL is active — your domain is live">
+    When the certificate is issued, the status updates to **Active** and a padlock icon appears next to your domain. Your service is now accessible at `https://www.example.com` (or whichever domain you configured) with full HTTPS encryption.
+  </Step>
+</Steps>
+
+## Apex Domains vs. Subdomains
+
+- **Subdomain** (e.g., `www.example.com`): Use a **CNAME** record pointing to your VenixCloud default subdomain. This is the simplest and most common setup.
+- **Apex domain** (e.g., `example.com` with no `www`): Also called a root or naked domain. Some DNS providers do not allow a CNAME record at the apex. See the note below for an alternative.
+
+<Note>
+  If your DNS provider doesn't support a CNAME at the apex (`@`), use an **A record** instead and point it to VenixCloud's IP address, which is shown in the **Custom Domain** settings panel alongside the CNAME option. Some providers (such as Cloudflare) support **CNAME flattening**, which lets you use a CNAME at the apex without issues.
+</Note>
+
+<Tip>
+  Set your DNS record's TTL to **300 seconds** (5 minutes) while you are setting up or changing your domain configuration. This means any corrections propagate quickly. Once everything is working, you can raise the TTL to a higher value (e.g., 3600) to reduce DNS lookup overhead.
+</Tip>
+
+<Warning>
+  After DNS verification completes, SSL certificate provisioning can take up to **10 minutes**. During this window your domain may briefly show an SSL error in browsers. Wait for the Dashboard to show **Active** before sharing the URL publicly.
+</Warning>

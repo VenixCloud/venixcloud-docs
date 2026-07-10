@@ -1,0 +1,112 @@
+---
+title: "Managing Environment Variables on VenixCloud"
+sidebarTitle: "Environment Variables"
+description: "Set, update, and delete environment variables for your VenixCloud services. Keep secrets safe and configure your app without code changes."
+---
+
+Environment variables let you separate configuration from code. Instead of hardcoding database connection strings, API tokens, or runtime flags directly in your application, you store them as key-value pairs that VenixCloud injects at runtime. This approach keeps credentials out of your version control history, makes it easy to run the same code in different environments, and allows you to update configuration without touching a single line of source code.
+
+## Setting Environment Variables via Dashboard
+
+<Steps>
+  <Step title="Open the service">
+    Go to **Dashboard → Services** and click the name of the service you want to configure.
+  </Step>
+  <Step title="Navigate to the Environment tab">
+    Select the **Environment** tab inside the service detail view.
+  </Step>
+  <Step title="Add a variable">
+    Click **Add Variable**. A new row appears with a **Key** field and a **Value** field.
+  </Step>
+  <Step title="Enter the key and value">
+    Type the variable name in the **Key** field (for example, `DATABASE_URL`) and paste or type its value in the **Value** field. Values are masked immediately after you save.
+  </Step>
+  <Step title="Save">
+    Click **Save Changes**. The variable is stored securely. You will need to redeploy your service for the change to take effect (see [Redeployment](#redeployment) below).
+  </Step>
+</Steps>
+
+To **update** an existing variable, click the pencil icon next to it, edit the value, and save. To **delete** a variable, click the trash icon and confirm the prompt.
+
+## Setting Environment Variables via API
+
+You can manage environment variables programmatically using the VenixCloud REST API.
+
+<CodeGroup>
+
+```bash Set a variable
+curl -X POST https://api.venixcloud.com/v1/services/{service_id}/env \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"key": "DATABASE_URL", "value": "postgresql://user:pass@host/db"}'
+```
+
+```bash Update a variable
+curl -X PATCH https://api.venixcloud.com/v1/services/{service_id}/env/DATABASE_URL \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"value": "postgresql://user:newpass@host/db"}'
+```
+
+```bash Delete a variable
+curl -X DELETE https://api.venixcloud.com/v1/services/{service_id}/env/DATABASE_URL \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```bash List all variables
+curl -X GET https://api.venixcloud.com/v1/services/{service_id}/env \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+Replace `{service_id}` with the ID shown on your service detail page and `YOUR_API_KEY` with a key from **Settings → API Keys**.
+
+## Redeployment
+
+Environment variable changes are **not** applied to a running service automatically. The new values are injected at startup, so you must redeploy your service after saving changes.
+
+<Steps>
+  <Step title="Save your variable changes">
+    Add, update, or delete variables in the dashboard or via the API as described above.
+  </Step>
+  <Step title="Trigger a redeployment">
+    From the service detail view, click **Deploy** in the top-right corner. Alternatively, use the API:
+
+    ```bash
+    curl -X POST https://api.venixcloud.com/v1/services/{service_id}/deploy \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+  </Step>
+  <Step title="Verify">
+    Once the deployment reaches the **Running** stage, your service is using the updated environment variables.
+  </Step>
+</Steps>
+
+## Best Practices
+
+<Tip>
+  Never hardcode secrets — passwords, API tokens, private keys — directly in your source code or commit them to version control. Use environment variables for all credentials and runtime configuration. If a secret is ever accidentally committed, rotate it immediately and remove it from your Git history.
+</Tip>
+
+Additional guidelines:
+
+- **Use descriptive names** — prefer `STRIPE_SECRET_KEY` over `SK` so the purpose is immediately clear.
+- **Keep environments separate** — use different services (or VenixCloud environments) for staging and production so you never accidentally point staging to a production database.
+- **Audit regularly** — review your environment variables periodically and remove any that are no longer needed.
+
+## Common Variables
+
+The table below lists environment variables you will encounter frequently across different service types on VenixCloud.
+
+| Variable | Used With | Description |
+|---|---|---|
+| `PORT` | Websites, Applications | The port your application's HTTP server should listen on. VenixCloud sets this automatically, but you can override it. |
+| `DATABASE_URL` | Any | Full connection string for a relational database, e.g., `postgresql://user:pass@host:5432/dbname`. |
+| `NODE_ENV` | Node.js apps | Runtime environment flag. Typically `production` on VenixCloud to enable performance optimizations. |
+| `BOT_TOKEN` | Bots | The authentication token issued by your bot platform (e.g., Discord, Telegram). |
+| `SECRET_KEY` | Web frameworks | A random, high-entropy string used for signing sessions, cookies, or JWTs. |
+
+<Warning>
+  Environment variable **values are masked** in the dashboard and in log output to prevent accidental exposure. However, any code running inside your service can still read them at runtime. Treat your service's runtime environment as trusted, and never log the values of sensitive variables from within your application.
+</Warning>

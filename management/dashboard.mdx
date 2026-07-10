@@ -1,0 +1,81 @@
+---
+title: "Navigating the VenixCloud Dashboard"
+sidebarTitle: "Dashboard"
+description: "Learn how to use the VenixCloud dashboard to create, manage, and monitor all your hosted services from one place."
+---
+
+The VenixCloud dashboard is your central control plane for everything you host — databases, bots, websites, and custom applications. From a single interface you can spin up new services, monitor running workloads, inspect logs, manage environment variables, and control deployments without ever leaving your browser.
+
+## Dashboard Overview
+
+When you log in, the dashboard surfaces four main areas that give you an at-a-glance picture of your infrastructure.
+
+<Card title="Services List" icon="server">
+  A live inventory of every service in your account, showing its name, type, current status, and region.
+</Card>
+
+<Card title="Recent Deployments" icon="rocket">
+  A feed of the latest deployment events across all services, including timestamps, triggering users, and pass/fail status.
+</Card>
+
+<Card title="Usage Stats" icon="chart-bar">
+  Aggregate CPU, memory, and bandwidth consumption rolled up across your plan, updated every 60 seconds.
+</Card>
+
+<Card title="Quick Actions" icon="bolt">
+  One-click controls to start, stop, restart, or redeploy any service without navigating into its detail view.
+</Card>
+
+## Services List
+
+The Services list is the primary way to find and act on any resource in your account.
+
+- **View all services** — all services are displayed in a table sorted by last-updated time by default.
+- **Filter by type** — use the **Type** dropdown to show only databases, bots, websites, or custom applications.
+- **Filter by status** — the **Status** filter lets you narrow the list to Running, Stopped, or Failed services instantly.
+- **Search** — type any part of a service name or ID into the search bar to jump directly to a match. The search is case-insensitive and updates results as you type.
+
+## Service Detail View
+
+Click any service name in the list to open its detail view. This page brings together everything you need to understand and operate that service.
+
+| Section | What you'll find |
+|---|---|
+| **Status** | Current state (Running, Stopped, Failed), uptime percentage, and last deployment timestamp. |
+| **Metrics** | Live CPU, RAM, and network graphs updated every 30 seconds. |
+| **Logs** | A streaming log tail showing stdout, stderr, and system events. |
+| **Environment** | All configured environment variables (values masked by default). |
+| **Settings** | Service name, region, scaling options, and deletion controls. |
+
+## Quick Actions
+
+You can manage the lifecycle of any service without opening its detail view. Each row in the Services list exposes an actions menu (the **⋮** icon on the right).
+
+<Steps>
+  <Step title="Open the actions menu">
+    Hover over a service row and click the **⋮** icon on the far right to reveal the actions menu.
+  </Step>
+  <Step title="Choose an action">
+    Select one of the available operations:
+    - **Start** — boots a stopped service and begins routing traffic.
+    - **Stop** — gracefully shuts down the service, preserving its configuration.
+    - **Restart** — stops and immediately starts the service; useful for applying config changes.
+    - **Redeploy** — triggers a fresh build and deployment using the latest image or commit.
+  </Step>
+  <Step title="Confirm">
+    Destructive actions (Stop, Restart) display a confirmation prompt. Click **Confirm** to proceed.
+  </Step>
+</Steps>
+
+## Settings
+
+Account-wide settings are accessible from the **Settings** link in the left sidebar.
+
+- **Profile** — update your display name and email address.
+- **API Keys** — generate, rotate, or revoke API keys used to authenticate programmatic requests.
+- **Plan Management** — view your current plan limits, upgrade to a higher tier, or review billing history.
+- **Team** — invite collaborators and assign roles (Owner, Editor, Viewer) on paid plans.
+
+<Tip>
+  For bulk operations — such as redeploying dozens of services at once or scripting environment changes — use the [VenixCloud REST API](https://api.venixcloud.com/docs) instead of the dashboard. API keys are available under **Settings → API Keys**.
+</Tip>

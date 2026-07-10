@@ -1,0 +1,87 @@
+---
+title: "Connect Your App to a VenixCloud Database"
+sidebarTitle: "Connect a Database"
+description: "Learn how to provision a database on VenixCloud and connect it to your application using the generated connection string."
+---
+
+VenixCloud lets you provision managed databases — PostgreSQL, MySQL, and more — right alongside your application services. Once your database is running, connecting your app is as simple as copying a connection string and setting an environment variable.
+
+## Step 1 — Create a database service
+
+If you haven't already provisioned a database, head to [Services → Databases](/services/databases) in your Dashboard and click **New Database**. Select your preferred engine (PostgreSQL or MySQL), choose a plan, and click **Create**. Your database will be ready in under a minute.
+
+## Step 2 — Get the connection string
+
+Once your database is running, open the service in your Dashboard and navigate to the **Connection Info** tab. VenixCloud generates a ready-to-use connection string for you:
+
+**PostgreSQL example**
+```
+postgresql://username:password@host.venixcloud.internal:5432/dbname
+```
+
+**MySQL example**
+```
+mysql://username:password@host.venixcloud.internal:3306/dbname
+```
+
+Copy the full connection string — you'll add it to your application in the next step.
+
+## Step 3 — Add the connection string to your app
+
+Open your **application service** in the Dashboard and go to the **Environment** tab. Add a new variable using the connection string you copied:
+
+| Key | Value |
+|-----|-------|
+| `DATABASE_URL` | `postgresql://username:password@host.venixcloud.internal:5432/dbname` |
+
+For more details on managing environment variables, see the [Environment Variables guide](/management/environment-variables).
+
+## Step 4 — Use the connection string in your code
+
+Read `DATABASE_URL` from the environment in your application code. Never paste the connection string directly into source files.
+
+<CodeGroup>
+  ```js Node.js (pg)
+  const { Pool } = require('pg');
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+  // Example query
+  const res = await pool.query('SELECT NOW()');
+  console.log(res.rows[0]);
+  ```
+
+  ```python Python (psycopg2)
+  import psycopg2, os
+
+  conn = psycopg2.connect(os.environ['DATABASE_URL'])
+  cursor = conn.cursor()
+
+  # Example query
+  cursor.execute('SELECT NOW()')
+  print(cursor.fetchone())
+  ```
+
+  ```js Node.js (mysql2)
+  const mysql = require('mysql2');
+  const conn = mysql.createConnection(process.env.DATABASE_URL);
+
+  // Example query
+  conn.query('SELECT NOW()', (err, results) => {
+    console.log(results);
+  });
+  ```
+</CodeGroup>
+
+## Security tips
+
+<Warning>
+  Never expose your database connection string publicly. Do not commit it to source control, print it in logs, or include it in client-side code. Always store it as an environment variable and access it at runtime only.
+</Warning>
+
+- Rotate your database credentials immediately if you suspect they have been compromised — you can generate new credentials from the **Connection Info** tab.
+- Grant your application the minimum database permissions it needs (e.g., `SELECT`, `INSERT`, `UPDATE`) rather than using a superuser account.
+- Enable connection pooling for high-traffic apps to avoid exhausting database connections.
+
+<Note>
+  Services on the same VenixCloud account are connected via a private internal network. You can use the internal hostname (ending in `.venixcloud.internal`) to route traffic between your app and database without it leaving VenixCloud's infrastructure. This is faster and more secure than connecting over the public internet.
+</Note>

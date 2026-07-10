@@ -1,0 +1,93 @@
+---
+title: "Database Hosting on VenixCloud"
+sidebarTitle: "Databases"
+description: "Host MySQL, PostgreSQL, MongoDB, and Redis databases on VenixCloud. Get a managed connection string, backups, and easy scaling."
+---
+
+VenixCloud takes the complexity out of database management so you can focus on building your application. Every database you deploy is fully managed — VenixCloud handles provisioning, networking, and security so you get a production-ready instance in seconds, complete with a connection string, automated backups, and one-click scaling.
+
+## Supported Engines
+
+Choose from four battle-tested database engines, each running a modern, actively maintained version:
+
+<CardGroup cols={2}>
+  <Card title="MySQL 8.x" icon="database">
+    The world's most popular open-source relational database. Ideal for structured data, e-commerce, and applications that rely on ACID-compliant transactions.
+  </Card>
+  <Card title="PostgreSQL 15+" icon="elephant">
+    A powerful, standards-compliant relational database with advanced features like JSON support, full-text search, and rich extension ecosystem.
+  </Card>
+  <Card title="MongoDB 6+" icon="leaf">
+    A flexible document database built for modern applications. Store JSON-like documents without a rigid schema and scale horizontally with ease.
+  </Card>
+  <Card title="Redis 7+" icon="bolt">
+    An ultra-fast in-memory data store used for caching, session management, real-time leaderboards, and pub/sub messaging.
+  </Card>
+</CardGroup>
+
+## Creating a Database
+
+<Steps>
+  <Step title="Open the New Service wizard">
+    Log in to your VenixCloud dashboard, click **New Service** in the top-right corner, and select **Database** from the service type list.
+  </Step>
+  <Step title="Choose your engine and version">
+    Select the database engine you need (MySQL, PostgreSQL, MongoDB, or Redis) and pick the version from the dropdown. VenixCloud always offers the latest stable release alongside the previous major version.
+  </Step>
+  <Step title="Set database credentials">
+    Enter a **database name**, a **username**, and a strong **password**. These credentials are stored securely and injected into your connection string automatically.
+  </Step>
+  <Step title="Choose a region">
+    Select the region closest to your application servers to minimise latency. Available regions are listed in the dropdown alongside their approximate ping from common locations.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy**. VenixCloud provisions your database instance within seconds. Once the status indicator turns green, your database is ready to accept connections.
+  </Step>
+</Steps>
+
+## Connection Strings
+
+After deployment, your connection string is available on the service's **Overview** tab. Copy the string that matches your engine and paste it directly into your application's configuration.
+
+<CodeGroup>
+```text MySQL
+mysql://user:password@host:3306/dbname
+```
+
+```text PostgreSQL
+postgresql://user:password@host:5432/dbname
+```
+
+```text MongoDB
+mongodb://user:password@host:27017/dbname
+```
+
+```text Redis
+redis://:password@host:6379
+```
+</CodeGroup>
+
+Replace `user`, `password`, `host`, and `dbname` with the values shown on your service's Overview tab. VenixCloud also provides these as individual environment variables (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`) if you prefer to construct the string yourself.
+
+## Backups
+
+VenixCloud automatically creates a full backup of your database every day at 02:00 UTC. Backups are stored in an isolated, geographically redundant object store — separate from your primary instance — so a regional outage never affects your recovery options.
+
+Backup retention depends on your plan:
+
+| Plan       | Retention Period |
+|------------|-----------------|
+| Starter    | 3 days          |
+| Pro        | 14 days         |
+| Business   | 30 days         |
+| Enterprise | 90 days         |
+
+To restore a backup, navigate to your database service, open the **Backups** tab, and click **Restore** next to the snapshot you need.
+
+## Scaling
+
+To upgrade your database's CPU or RAM, go to your service's **Settings** tab and click **Change Plan**. VenixCloud performs the resize with a brief rolling restart — typically under 30 seconds — so downtime is minimal. Disk storage can be increased independently from the **Storage** section of the same settings page; storage upgrades are applied live without any restart.
+
+<Note>
+  Each plan enforces a maximum number of simultaneous connections to your database. If your application opens many connections concurrently, consider using a connection pooler such as PgBouncer (PostgreSQL) or ProxySQL (MySQL), or upgrade to a higher plan for a larger connection limit.
+</Note>

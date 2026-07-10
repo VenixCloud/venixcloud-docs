@@ -1,0 +1,76 @@
+---
+title: "Deploy a Discord Bot on VenixCloud"
+sidebarTitle: "Deploy a Bot"
+description: "Step-by-step guide to deploying a Discord bot on VenixCloud using Node.js or Python, with 24/7 uptime and automatic restarts."
+---
+
+This guide walks you through deploying a Discord bot on VenixCloud from scratch. Whether your bot is written in Node.js or Python, you'll have it running 24/7 with automatic restarts and live log monitoring in just a few minutes.
+
+## Prerequisites
+
+- A Discord bot token from the [Discord Developer Portal](https://discord.com/developers/applications)
+- A Node.js or Python bot project ready to deploy
+- A VenixCloud account — [sign up here](https://venixcloud.app)
+
+## Deploy Your Bot
+
+<Steps>
+  <Step title="Prepare your bot">
+    Make sure your bot's entry point is a single file — `index.js` for Node.js or `main.py` for Python. Your bot must read its token from an environment variable rather than hardcoding it in source code.
+
+    <CodeGroup>
+      ```js Node.js
+      const token = process.env.BOT_TOKEN;
+      client.login(token);
+      ```
+
+      ```python Python
+      import os
+      bot.run(os.environ['BOT_TOKEN'])
+      ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Create the service">
+    In your VenixCloud Dashboard, click **New Service** and select **Bot** as the service type. Choose either **Node.js** or **Python** as your runtime depending on your project.
+  </Step>
+
+  <Step title="Upload or connect your repo">
+    Connect your **GitHub repository** for automatic deployments on every push, or upload your project as a **ZIP file** if you prefer a manual workflow. VenixCloud will detect your project structure automatically.
+  </Step>
+
+  <Step title="Add environment variables">
+    Navigate to the **Environment** tab of your service and add the following variable:
+
+    | Key | Value |
+    |-----|-------|
+    | `BOT_TOKEN` | Your Discord bot token |
+
+    Your bot token is now securely injected at runtime and never stored in your code.
+  </Step>
+
+  <Step title="Set the start command">
+    Under **Settings**, set the start command that VenixCloud uses to launch your bot:
+
+    - **Node.js**: `node index.js`
+    - **Python**: `python main.py`
+
+    Adjust the filename if your entry point has a different name.
+  </Step>
+
+  <Step title="Deploy">
+    Click the **Deploy** button. VenixCloud will install your dependencies, build your project if needed, and start your bot. Wait for the service status indicator to turn green and display **Running**.
+  </Step>
+
+  <Step title="Verify your bot is online">
+    Open the **Logs** tab on your service to view real-time output. You should see your bot's ready message — for example, `Logged in as MyBot#1234`. Check your Discord server to confirm the bot is online and responding to commands.
+  </Step>
+</Steps>
+
+<Tip>
+  If your bot connects to a database or uses external APIs, add those credentials as additional environment variables on the same **Environment** tab — for example, `DATABASE_URL` or `API_KEY`. Keep all secrets out of your source code.
+</Tip>
+
+<Note>
+  VenixCloud automatically restarts your bot if it crashes unexpectedly. You can configure the restart policy and view crash history in the **Settings** tab of your service.
+</Note>

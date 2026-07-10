@@ -1,0 +1,166 @@
+---
+title: "Frequently Asked Questions about VenixCloud"
+sidebarTitle: "FAQ"
+description: "Answers to the most common questions about VenixCloud's hosting plans, services, API, uptime guarantees, and data security."
+---
+
+Whether you're evaluating VenixCloud for the first time or looking for a quick answer about an existing service, this page collects the questions our users ask most often. Browse by topic below, and if you don't see what you're looking for, reach out to support at [suporte@venixcloud.com](mailto:suporte@venixcloud.com).
+
+## General
+
+<AccordionGroup>
+  <Accordion title="What is VenixCloud?">
+    VenixCloud is a managed cloud hosting platform designed to make it easy to deploy and scale modern workloads without managing your own infrastructure. You can host:
+
+    - **Databases** — MySQL, PostgreSQL, MongoDB, and Redis instances spun up in seconds.
+    - **Bots** — Discord, Telegram, and any other bot that runs on Node.js or Python.
+    - **Websites** — static sites and full-stack web applications with automatic TLS.
+    - **Custom applications** — anything that runs in a container, including Docker-based workloads.
+
+    VenixCloud handles provisioning, scaling, and monitoring so you can focus on building your product.
+  </Accordion>
+
+  <Accordion title="Where are VenixCloud servers located?">
+    VenixCloud currently operates data centers in two regions:
+
+    - **Brazil** — São Paulo (GRU), ideal for users and end-customers in South America.
+    - **United States** — US East region, suitable for global or North America-focused deployments.
+
+    You can select your preferred region when creating a new service. Choosing a region close to your users reduces latency and improves performance.
+  </Accordion>
+
+  <Accordion title="What is the uptime SLA?">
+    VenixCloud guarantees **99.9% uptime** for all services on the Starter plan and above. This translates to less than 9 hours of downtime per year across scheduled and unscheduled maintenance windows combined.
+
+    <Note>
+      The Free plan does not include an SLA guarantee. For production workloads, we recommend the Starter plan or higher to ensure you're covered by the uptime commitment.
+    </Note>
+
+    You can monitor live and historical uptime for all VenixCloud systems at our public status page.
+  </Accordion>
+</AccordionGroup>
+
+## Services
+
+<AccordionGroup>
+  <Accordion title="Which database engines are supported?">
+    VenixCloud supports the following managed database engines:
+
+    | Engine | Versions |
+    |---|---|
+    | **MySQL** | 8.0+ |
+    | **PostgreSQL** | 14, 15, 16 |
+    | **MongoDB** | 6.0+ |
+    | **Redis** | 7.0+ |
+
+    Each database service comes with automated daily backups, one-click restores, and a connection string you can copy directly into your application's environment variables.
+  </Accordion>
+
+  <Accordion title="Can I host a Discord bot?">
+    Yes — VenixCloud is a popular choice for Discord bots. Any bot written in **Node.js** (e.g. discord.js) or **Python** (e.g. discord.py, Pycord) runs without any special configuration. Simply push your code, set your `BOT_TOKEN` environment variable, and VenixCloud keeps the process running 24/7 with automatic restarts on crash.
+
+    <Tip>
+      Set your start command to the exact script that launches your bot (e.g. `node index.js` or `python bot.py`) and make sure all dependencies are listed in your `package.json` or `requirements.txt` so they're installed automatically on each deploy.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Can I use Docker?">
+    Yes. For custom applications, you can upload a `Dockerfile` or a `docker-compose.yml` to define your own build and runtime environment. VenixCloud builds the image on its infrastructure and runs the resulting container — no local Docker daemon or registry credentials required.
+
+    This makes it possible to host virtually any language or runtime that isn't natively supported, including Go, Rust, Ruby, Java, and more.
+  </Accordion>
+
+  <Accordion title="Do I get a free subdomain?">
+    Yes. Every website or web application you deploy automatically receives a free subdomain in the format:
+
+    ```
+    yourapp.venixcloud.app
+    ```
+
+    You can also attach a **custom domain** at any time from **Settings → Domains**. VenixCloud provisions a TLS certificate for your custom domain automatically via Let's Encrypt.
+  </Accordion>
+</AccordionGroup>
+
+## API
+
+<AccordionGroup>
+  <Accordion title="Is there a public API?">
+    Yes. VenixCloud exposes a REST API that lets you manage your services, environment variables, deployments, and databases programmatically.
+
+    **Base URL:** `https://api.venixcloud.com/v1`
+
+    The API accepts and returns JSON. All endpoints require an API key passed in the `Authorization` header as a Bearer token. See the full reference for available endpoints, request/response schemas, and example calls.
+
+    [View API Reference](/api-reference/introduction)
+  </Accordion>
+
+  <Accordion title="How do I get an API key?">
+    You can generate an API key from the VenixCloud dashboard in a few steps:
+
+    1. Open the **Dashboard** and click your avatar in the top-right corner.
+    2. Go to **Settings → API Keys**.
+    3. Click **Generate New Key**, give it a descriptive name, and confirm.
+    4. Copy the key immediately — it's only shown once.
+
+    <Note>
+      Treat your API key like a password. Store it in a secrets manager or as an environment variable, and never commit it to a public repository.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Is there a rate limit on the API?">
+    Yes. API rate limits depend on your plan:
+
+    | Plan | Rate Limit |
+    |---|---|
+    | **Free** | 60 requests / minute |
+    | **Pro and above** | 300 requests / minute |
+
+    If you exceed the limit, the API returns a `429 Too Many Requests` response. The `Retry-After` header in that response tells you how many seconds to wait before retrying. For workloads that require higher throughput, contact the support team to discuss enterprise options.
+  </Accordion>
+</AccordionGroup>
+
+## Billing
+
+<AccordionGroup>
+  <Accordion title="Can I cancel at any time?">
+    Yes. VenixCloud has no lock-in contracts. You can cancel any service or your entire account at any time from **Settings → Plan**.
+
+    When you cancel, your services remain active until the end of the current billing period. After that, they are permanently deleted. Make sure to **export any data** (databases, logs) before the billing period ends.
+  </Accordion>
+
+  <Accordion title="Do you offer refunds?">
+    Yes. If you're unhappy with VenixCloud for any reason, you can request a full refund **within 7 days of your billing date**. To request a refund, contact the support team at [suporte@venixcloud.com](mailto:suporte@venixcloud.com) with your account email and invoice number.
+
+    Refunds are processed within 5–10 business days depending on your payment provider. Requests submitted after the 7-day window are reviewed on a case-by-case basis.
+  </Accordion>
+
+  <Accordion title="Are there discounts for annual billing?">
+    Yes. Switching to an annual subscription gives you **2 months free** — effectively a ~17% discount compared to paying monthly. You can switch to annual billing at any time from **Settings → Plan**.
+
+    <Tip>
+      Annual billing is charged upfront for the full year. If you cancel mid-year and are within the 7-day refund window from your most recent charge, you may be eligible for a prorated refund — contact support for details.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Security
+
+<AccordionGroup>
+  <Accordion title="Is my data encrypted?">
+    Yes. VenixCloud encrypts all customer data in two ways:
+
+    - **At rest** — all disks and database volumes are encrypted using AES-256. This protects your data if physical media is ever compromised.
+    - **In transit** — all connections to VenixCloud services are encrypted with TLS 1.2 or higher. Free TLS certificates are provisioned automatically for all hosted websites and APIs.
+
+    Internal service-to-service communication within the VenixCloud infrastructure also runs over encrypted channels.
+  </Accordion>
+
+  <Accordion title="Can I export my data?">
+    Yes. You can export your data at any time directly from the dashboard:
+
+    - **Databases** — go to your database service and click **Export** to download a full SQL or BSON dump, depending on the engine.
+    - **Application files** — connect via the VenixCloud CLI or use the API to pull your deployed file system.
+
+    We recommend setting up regular exports or using the API to automate backups to your own storage bucket for critical data.
+  </Accordion>
+</AccordionGroup>

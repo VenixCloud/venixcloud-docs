@@ -1,0 +1,160 @@
+---
+title: "REST API Endpoints for Bots"
+sidebarTitle: "Bots"
+description: "API endpoints to list and create bot services on VenixCloud. Deploy Discord, Telegram, and custom bots programmatically."
+---
+
+The Bots API allows you to deploy and manage long-running bot processes on VenixCloud infrastructure. You can host Discord bots, Telegram bots, or any custom automation script that needs to run continuously, without worrying about servers, uptime monitoring, or process management. VenixCloud keeps your bot alive automatically and restarts it if it crashes. All requests require a valid API key in the `Authorization` header.
+
+---
+
+## List All Bots
+
+Retrieve a list of every bot service associated with your account. The response includes the runtime and current operational status for each bot.
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://api.venixcloud.com/v1/bots \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Response
+
+**Status: `200 OK`**
+
+```json
+{
+  "data": [
+    {
+      "id": "bot_d4f8a2",
+      "name": "discord-modbot",
+      "runtime": "nodejs-20",
+      "status": "running",
+      "created_at": "2024-02-20T09:00:00Z"
+    },
+    {
+      "id": "bot_p1q5r9",
+      "name": "telegram-notifier",
+      "runtime": "python-3.11",
+      "status": "running",
+      "created_at": "2024-02-25T11:30:00Z"
+    }
+  ],
+  "total": 2
+}
+```
+
+<ResponseField name="data" type="array">
+  An array of bot service objects belonging to your account.
+
+  <Expandable title="Bot object fields">
+    <ResponseField name="id" type="string">
+      The unique identifier for the bot, prefixed with `bot_`.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      The human-readable name you assigned to the bot service.
+    </ResponseField>
+    <ResponseField name="runtime" type="string">
+      The runtime environment the bot is executing in, e.g. `nodejs-20` or `python-3.11`.
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      The current operational state. One of `running`, `stopped`, `building`, `provisioning`, or `failed`.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of when the bot service was created.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="total" type="integer">
+  The total number of bot services returned.
+</ResponseField>
+
+---
+
+## Create a Bot
+
+Deploy a new bot service by specifying a runtime, a start command, and a region. VenixCloud provisions the container, installs dependencies from your connected repository, and runs the command you specify to keep your bot online continuously.
+
+<Tip>
+  Connect your Git repository to the bot service through the VenixCloud dashboard after creation to enable automatic deployments on every push.
+</Tip>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.venixcloud.com/v1/bots \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "discord-modbot",
+    "runtime": "nodejs-20",
+    "start_command": "node index.js",
+    "region": "us-east-1"
+  }'
+```
+
+</CodeGroup>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  A unique name for your bot service. Must be between 3 and 63 characters and contain only lowercase letters, numbers, and hyphens.
+</ParamField>
+
+<ParamField body="runtime" type="string" required>
+  The runtime environment to use when executing your bot. Accepted values are `nodejs-20`, `nodejs-18`, `python-3.11`, and `python-3.10`.
+</ParamField>
+
+<ParamField body="start_command" type="string" required>
+  The shell command VenixCloud runs to start your bot process. Examples: `node index.js`, `python main.py`, `npm start`.
+</ParamField>
+
+<ParamField body="region" type="string" required>
+  The region where the bot will run. Accepted values are `sa-east-1` (São Paulo) and `us-east-1` (North Virginia). Choose the region closest to your bot's primary user base for lower latency.
+</ParamField>
+
+### Response
+
+**Status: `201 Created`**
+
+```json
+{
+  "id": "bot_d4f8a2",
+  "name": "discord-modbot",
+  "runtime": "nodejs-20",
+  "start_command": "node index.js",
+  "status": "provisioning",
+  "region": "us-east-1",
+  "created_at": "2024-03-15T16:20:00Z"
+}
+```
+
+<ResponseField name="id" type="string">
+  The unique identifier for the newly created bot, prefixed with `bot_`.
+</ResponseField>
+<ResponseField name="name" type="string">
+  The name you provided in the request.
+</ResponseField>
+<ResponseField name="runtime" type="string">
+  The runtime environment assigned to the bot.
+</ResponseField>
+<ResponseField name="start_command" type="string">
+  The command VenixCloud uses to start the bot process.
+</ResponseField>
+<ResponseField name="status" type="string">
+  Always `provisioning` immediately after creation. Transitions to `building` and then `running` once the environment is ready.
+</ResponseField>
+<ResponseField name="region" type="string">
+  The region where the bot is deployed.
+</ResponseField>
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the bot service was created.
+</ResponseField>
+
+<Note>
+  After creating a bot, add your environment variables (such as bot tokens) through the VenixCloud dashboard or the environment variables API before your bot will be able to authenticate with external platforms.
+</Note>

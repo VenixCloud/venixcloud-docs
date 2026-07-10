@@ -1,0 +1,99 @@
+---
+title: "Custom Application Hosting on VenixCloud"
+sidebarTitle: "Custom Apps"
+description: "Host any custom application on VenixCloud. Supports Node.js, Python, Go, Java, and Docker-based workloads with full environment control."
+---
+
+VenixCloud's Custom App service gives you the flexibility to host virtually any workload that doesn't fit neatly into the Bot or Website categories. Whether you're running a background worker, a gRPC microservice, a scheduled job processor, or a containerised application with a custom runtime, Custom Apps give you full control over the execution environment, networking, and resource allocation — without the overhead of managing your own infrastructure.
+
+## Supported Runtimes
+
+Choose a managed runtime for zero-configuration dependency installation, or bring your own environment with Docker.
+
+| Runtime | Supported Versions         |
+|---------|---------------------------|
+| Node.js | 18 (LTS), 20 (LTS)        |
+| Python  | 3.10, 3.11, 3.12          |
+| Go      | 1.21, 1.22                |
+| Java    | 17 (LTS), 21 (LTS)        |
+| Docker  | Any image (via Dockerfile) |
+
+## Creating a Custom App
+
+<Steps>
+  <Step title="Open the New Service wizard">
+    Log in to your VenixCloud dashboard, click **New Service**, and select **Custom App** from the service type list.
+  </Step>
+  <Step title="Choose a runtime or Docker">
+    Select the managed runtime that matches your application, or choose **Docker** if you want to define the full environment yourself using a `Dockerfile` or `docker-compose.yml`.
+  </Step>
+  <Step title="Connect your source code">
+    Connect your **GitHub repository** for continuous deployment on every push, or upload a **ZIP archive** for a manual deploy. For Docker deployments, make sure your `Dockerfile` is at the root of the repository.
+  </Step>
+  <Step title="Set the start command and port">
+    Enter the **Start Command** that launches your application (e.g. `node server.js`, `python main.py`, `./myapp`). Then specify the **Port** your application listens on — VenixCloud will set the `PORT` environment variable to this value automatically.
+  </Step>
+  <Step title="Set environment variables">
+    Add any configuration your application needs — API keys, database URLs, feature flags — in the **Environment** tab. All values are encrypted at rest and injected into your runtime at startup.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy**. VenixCloud builds your application, starts the process, and confirms it is healthy. The service card will display a green **Running** badge once everything is live.
+  </Step>
+</Steps>
+
+## Port Configuration
+
+VenixCloud routes external traffic to your application using the port you specify during setup. Your application **must** listen on the port provided by the `PORT` environment variable — do not hardcode a port number in your source code. VenixCloud injects the correct value at runtime.
+
+```bash
+# Example: reading PORT in a Node.js app
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Listening on port ${port}`));
+```
+
+```python
+# Example: reading PORT in a Python/FastAPI app
+import os
+port = int(os.environ.get("PORT", 8000))
+uvicorn.run(app, host="0.0.0.0", port=port)
+```
+
+If your application does not bind to the expected port within 60 seconds of startup, VenixCloud will mark the deploy as failed and roll back to the previous healthy version.
+
+## Docker Support
+
+If none of the managed runtimes suit your needs, use Docker to define a fully custom environment. Place a `Dockerfile` at the root of your repository and VenixCloud will build the image on every deploy and run the resulting container.
+
+You can also use `docker-compose.yml` for multi-container workloads — VenixCloud spins up all defined services within an isolated network, so containers can communicate with each other using their service names as hostnames.
+
+```dockerfile
+# Example minimal Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+<Note>
+  Make sure your Dockerfile respects the `PORT` environment variable rather than hardcoding a port number, so VenixCloud can route traffic correctly.
+</Note>
+
+## Resource Limits
+
+Every Custom App runs within the CPU and RAM limits of your chosen plan. If your application consistently approaches its limits, VenixCloud will show a resource warning on the service dashboard.
+
+| Plan       | CPU         | RAM    |
+|------------|-------------|--------|
+| Starter    | 0.5 vCPU    | 512 MB |
+| Pro        | 1 vCPU      | 2 GB   |
+| Business   | 2 vCPU      | 4 GB   |
+| Enterprise | Custom      | Custom |
+
+To upgrade, go to your service's **Settings > Plan** and select a higher tier. Resource upgrades are applied with a brief rolling restart.
+
+<Note>
+  The local filesystem inside a Custom App container is **ephemeral** — any files written at runtime are lost when the service restarts or redeploys. If your application needs to persist data between restarts (uploads, generated files, databases), store them in a VenixCloud [Database](/services/databases) or an external object storage service. Persistent volume mounts are available on Pro plans and above.
+</Note>

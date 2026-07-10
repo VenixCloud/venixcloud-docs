@@ -1,47 +1,72 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with VenixCloud in Minutes"
+sidebarTitle: "Quickstart"
+description: "Learn how to create your first service on VenixCloud — deploy a database, bot, or website in under five minutes."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+VenixCloud is a cloud hosting platform that lets you deploy and manage databases, bots, websites, and custom applications from a single dashboard. Whether you're spinning up a PostgreSQL instance, hosting a Discord bot, or launching a production web app, this guide walks you through every step — from creating your account to making your first API call.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
-    ```bash
-    npm install your-package
-    ```
+  <Step title="Create your account">
+    Head to [venixcloud.com](https://venixcloud.com) and click **Sign Up**. Enter your name, email address, and a secure password. After submitting the form, check your inbox for a verification email and click the confirmation link to activate your account.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
 
-    ```bash
-    your-cli init
-    ```
+  <Step title="Access the dashboard">
+    Once your email is verified, log in to be taken directly to your **Dashboard**. The left sidebar gives you quick access to your Services, Billing, and Settings. The main panel shows a summary of your active services, resource usage, and recent activity — everything you need at a glance to monitor and manage your infrastructure.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
-    ```
+  <Step title="Create your first service">
+    In the dashboard, click the **New Service** button in the top-right corner. You'll be prompted to choose a service type:
+
+    - **Database** — PostgreSQL, MySQL, Redis, and more
+    - **Bot** — host Discord, Telegram, or custom bots
+    - **Website** — static sites or server-rendered apps
+    - **Custom App** — any Docker-compatible workload
+
+    Give your service a descriptive name and select the **region** closest to your users. Click **Continue** to proceed to the configuration step.
+  </Step>
+
+  <Step title="Configure environment variables">
+    Before deploying, add any environment variables your service needs to run correctly. In the **Environment** tab, click **Add Variable**, then enter a key-value pair — for example, `DATABASE_URL` or `BOT_TOKEN`. All variables are encrypted at rest and injected securely into your service's runtime. You can add, edit, or remove variables at any time, even after deployment.
+  </Step>
+
+  <Step title="Deploy">
+    With your configuration in place, click the **Deploy** button. VenixCloud will build and provision your service — this typically takes between 30 seconds and 2 minutes depending on the service type. Watch the real-time build logs to track progress. Once the status indicator turns green and shows **Running**, copy your **connection string** (for databases) or **public URL** (for websites and bots) from the service overview panel.
+  </Step>
+
+  <Step title="Get your API key">
+    To manage your services programmatically, navigate to **Settings → API Keys** in the left sidebar. Click **Generate New Key**, give it a descriptive label (e.g., `ci-pipeline` or `local-dev`), and copy it immediately — it won't be shown again. Use this key to authenticate all requests to the VenixCloud REST API.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+<Note>
+  Free plan accounts are limited to **1 active service**, **256 MB of RAM**, and **1 GB of storage**. Your service will be automatically paused after **30 minutes of inactivity**. Upgrade to a paid plan at any time to remove these limits and keep your services running continuously.
+</Note>
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+## Your first API call
+
+With your API key in hand, you can interact with VenixCloud programmatically. The example below retrieves a list of all services associated with your account:
+
+```bash
+curl -X GET https://api.venixcloud.com/v1/services \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Replace `YOUR_API_KEY` with the key you generated in Step 6. A successful response returns a JSON array of your service objects, each containing the service ID, name, type, status, and endpoint. You can use the REST API to create, configure, restart, and delete services without ever opening the dashboard.
+
+## Explore by service type
+
+<CardGroup cols={2}>
+  <Card title="Databases" icon="database" href="/services/databases">
+    Deploy managed PostgreSQL, MySQL, and Redis instances with automated backups and connection pooling.
+  </Card>
+  <Card title="Bots" icon="robot" href="/services/bots">
+    Host Discord, Telegram, or any custom bot with persistent uptime and environment variable support.
+  </Card>
+  <Card title="Websites" icon="globe" href="/services/websites">
+    Publish static sites or server-rendered applications with automatic SSL and custom domain support.
+  </Card>
+  <Card title="Custom Apps" icon="box" href="/services/custom-apps">
+    Run any Docker-compatible workload on VenixCloud with full control over resources and configuration.
+  </Card>
+</CardGroup>
