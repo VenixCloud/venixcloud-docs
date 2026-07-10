@@ -1,7 +1,7 @@
 ---
-title: "Database Hosting on VenixCloud"
+title: "Host MySQL, PostgreSQL & Redis Databases on VenixCloud"
 sidebarTitle: "Databases"
-description: "Host MySQL, PostgreSQL, MongoDB, and Redis databases on VenixCloud. Get a managed connection string, backups, and easy scaling."
+description: "Host MySQL, PostgreSQL, MongoDB, and Redis on VenixCloud. Get a managed connection string, automated daily backups, and one-click scaling."
 ---
 
 VenixCloud takes the complexity out of database management so you can focus on building your application. Every database you deploy is fully managed — VenixCloud handles provisioning, networking, and security so you get a production-ready instance in seconds, complete with a connection string, automated backups, and one-click scaling.
@@ -50,19 +50,19 @@ Choose from four battle-tested database engines, each running a modern, actively
 After deployment, your connection string is available on the service's **Overview** tab. Copy the string that matches your engine and paste it directly into your application's configuration.
 
 <CodeGroup>
-```text MySQL
+```bash MySQL
 mysql://user:password@host:3306/dbname
 ```
 
-```text PostgreSQL
+```bash PostgreSQL
 postgresql://user:password@host:5432/dbname
 ```
 
-```text MongoDB
+```bash MongoDB
 mongodb://user:password@host:27017/dbname
 ```
 
-```text Redis
+```bash Redis
 redis://:password@host:6379
 ```
 </CodeGroup>
@@ -91,3 +91,14 @@ To upgrade your database's CPU or RAM, go to your service's **Settings** tab and
 <Note>
   Each plan enforces a maximum number of simultaneous connections to your database. If your application opens many connections concurrently, consider using a connection pooler such as PgBouncer (PostgreSQL) or ProxySQL (MySQL), or upgrade to a higher plan for a larger connection limit.
 </Note>
+
+## API Reference
+
+You can manage your database services programmatically using the VenixCloud REST API.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/databases` | List all database services in your account. |
+| `POST` | `/databases` | Create a new database service. |
+
+For full request and response details, see the [API Reference](/api-reference).

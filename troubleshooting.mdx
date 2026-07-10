@@ -1,7 +1,7 @@
 ---
-title: "Troubleshoot Common VenixCloud Issues"
+title: "Troubleshooting Common VenixCloud Issues and Errors"
 sidebarTitle: "Troubleshooting"
-description: "Fix the most common issues on VenixCloud: deployment failures, connection errors, bot crashes, and billing problems."
+description: "Fix the most common VenixCloud issues: deployment failures, connection errors, bot crashes, billing problems, and how to resolve them."
 ---
 
 When something goes wrong on VenixCloud, the fastest path to a fix is checking your service logs first. Most issues leave a clear error message in the build or runtime output. Use the sections below to identify your problem and follow the recommended steps to resolve it — and if you're still stuck, reach out to the support team at the bottom of this page.
@@ -12,7 +12,7 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="My deployment is stuck on 'Building'">
     A build that never completes usually points to one of the following:
 
-    - **Check your build logs** — open the Logs tab on your service dashboard and look for the last line output before it stalled.
+    - **Check your build logs** — open the [Logs tab](/management/logs-monitoring) on your service dashboard and look for the last line output before it stalled.
     - **Verify your build command** — confirm the command in your service settings (e.g. `npm run build`) is correct and actually exits when finished.
     - **Check your dependencies** — make sure all packages listed in your `package.json`, `requirements.txt`, or equivalent file are available and correctly versioned.
 
@@ -22,8 +22,8 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="Deployment failed with exit code 1">
     Exit code 1 means your application process terminated with an error. Here's how to diagnose it:
 
-    - **Read stdout/stderr** — open the Logs tab and scroll to the bottom of the failed deployment to find the actual error message.
-    - **Check for missing environment variables** — a common cause is a required env var (like `DATABASE_URL` or `SECRET_KEY`) not being set. Go to **Settings → Environment** and verify all required variables are present.
+    - **Read stdout/stderr** — open the [Logs tab](/management/logs-monitoring) and scroll to the bottom of the failed deployment to find the actual error message.
+    - **Check for missing environment variables** — a common cause is a required env var (like `DATABASE_URL` or `SECRET_KEY`) not being set. Go to [Settings → Environment](/management/environment-variables) and verify all required variables are present.
     - **Verify your start command** — make sure the command in your service settings points to the correct entry file (e.g. `node src/index.js` or `python main.py`).
     - **Check the port** — if your app is a web service, ensure it binds to the `PORT` environment variable provided by VenixCloud.
   </Accordion>
@@ -31,7 +31,7 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="My app deployed but returns 502 Bad Gateway">
     A 502 error means VenixCloud's routing layer reached your container but your application wasn't responding. This typically happens because:
 
-    - Your app crashed immediately after startup — check the **Runtime Logs** tab for a stack trace or panic message.
+    - Your app crashed immediately after startup — check the [Runtime Logs](/management/logs-monitoring) for a stack trace or panic message.
     - Your app is listening on the wrong port — VenixCloud injects a `PORT` environment variable. Make sure your server binds to `process.env.PORT` (Node.js) or `int(os.environ.get("PORT"))` (Python) rather than a hard-coded value like `3000` or `8080`.
     - Your app takes too long to start — if startup exceeds the health-check timeout, VenixCloud marks the service as unhealthy. Optimize your initialization code or increase the startup grace period in service settings.
 
@@ -47,7 +47,7 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="Cannot connect to my database">
     If your application can't reach its database, work through these checks in order:
 
-    1. **Verify your connection string** — open **Settings → Environment** and confirm the `DATABASE_URL` (or equivalent) is copied exactly from the database service's **Connection** tab. Watch for typos or missing special characters.
+    1. **Verify your connection string** — open [Settings → Environment](/management/environment-variables) and confirm the `DATABASE_URL` (or equivalent) is copied exactly from the [database service's](/services/databases) **Connection** tab. Watch for typos or missing special characters.
     2. **Check the database service status** — go to your database service in the dashboard and confirm it shows a **Running** status. If it shows **Stopped** or **Error**, restart it and review its logs.
     3. **Review access settings** — if you're connecting from an external client (e.g. a local tool like DBeaver), make sure the database's firewall rules allow your IP address. Internal service-to-service connections within VenixCloud don't require firewall changes.
   </Accordion>
@@ -55,7 +55,7 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="Too many connections error">
     Most database engines enforce a maximum number of simultaneous connections. If you're hitting this limit:
 
-    - **Upgrade your plan** — higher-tier plans on VenixCloud allow more concurrent connections. Go to **Settings → Plan** to compare options.
+    - **Upgrade your plan** — higher-tier plans on VenixCloud allow more concurrent connections. Go to [Settings → Plan](/plans-billing) to compare options.
     - **Use a connection pooler** — tools like [PgBouncer](https://www.pgbouncer.org/) (PostgreSQL) or [ProxySQL](https://proxysql.com/) (MySQL) sit between your app and the database and multiplex many application connections over a smaller number of real database connections.
     - **Audit your application code** — make sure your app releases connections back to the pool after each request and doesn't leak open connections on errors.
 
@@ -71,15 +71,17 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="My bot goes offline randomly">
     Intermittent disconnects are almost always caused by unhandled exceptions crashing the bot process. VenixCloud automatically restarts crashed services, which is why the bot comes back — but you should fix the root cause:
 
-    - **Read the crash logs** — open the **Logs** tab and look for the stack trace that appeared just before the restart. The error message will tell you exactly what failed.
+    - **Read the crash logs** — open the [Logs tab](/management/logs-monitoring) and look for the stack trace that appeared just before the restart. The error message will tell you exactly what failed.
     - **Add global error handling** — wrap your bot's event handlers in try/catch blocks (Node.js) or use a top-level `except` handler (Python) so a single bad event doesn't bring down the whole process.
     - **Check for memory leaks** — if the bot runs fine for hours then crashes, check memory usage in the **Metrics** tab. A steady climb in memory over time indicates a leak.
+
+    For more on keeping your bot online, see the [Bots service guide](/services/bots).
   </Accordion>
 
   <Accordion title="Bot token invalid error">
     This error means the platform (Discord, Telegram, etc.) rejected the token your bot is using to authenticate. To fix it:
 
-    - **Check the `BOT_TOKEN` environment variable** — go to **Settings → Environment** and confirm the variable is set. Make sure there are no leading or trailing spaces — these are invisible but will invalidate the token.
+    - **Check the `BOT_TOKEN` environment variable** — go to [Settings → Environment](/management/environment-variables) and confirm the variable is set. Make sure there are no leading or trailing spaces — these are invisible but will invalidate the token.
     - **Regenerate the token** — if the token was accidentally shared or committed to a public repository, regenerate it immediately in your bot application's developer portal and update the env var in VenixCloud.
     - **Confirm the correct variable name** — make sure your code reads the token from the same variable name you've defined (e.g. `process.env.BOT_TOKEN` or `os.environ["BOT_TOKEN"]`).
   </Accordion>
@@ -91,8 +93,8 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="My service was suspended">
     Services are suspended for one of two reasons:
 
-    - **Payment failed** — your card was declined or expired. Go to **Settings → Billing** to update your payment method and settle any outstanding balance. Your service will be reactivated automatically once the payment is processed.
-    - **Plan limits exceeded** — your service consumed more resources (RAM, CPU, bandwidth) than your current plan allows. Go to **Settings → Plan** to upgrade to a tier that covers your usage.
+    - **Payment failed** — your card was declined or expired. Go to [Settings → Billing](/plans-billing) to update your payment method and settle any outstanding balance. Your service will be reactivated automatically once the payment is processed.
+    - **Plan limits exceeded** — your service consumed more resources (RAM, CPU, bandwidth) than your current plan allows. Go to [Settings → Plan](/plans-billing) to upgrade to a tier that covers your usage.
 
     <Note>
       VenixCloud sends warning emails before suspending a service. Check your inbox (including spam) for prior notifications.
@@ -102,7 +104,7 @@ When something goes wrong on VenixCloud, the fastest path to a fix is checking y
   <Accordion title="I was charged twice">
     Duplicate charges are rare but can occasionally occur due to payment processor retries. To resolve it:
 
-    1. Go to **Settings → Billing → Invoices** and locate both charge entries.
+    1. Go to [Settings → Billing → Invoices](/plans-billing) and locate both charge entries.
     2. Note the **Invoice IDs** for both transactions.
     3. Contact the support team (see below) with both invoice IDs and the charge amounts.
 

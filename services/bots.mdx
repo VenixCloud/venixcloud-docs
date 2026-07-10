@@ -1,5 +1,5 @@
 ---
-title: "Bot Hosting on VenixCloud"
+title: "VenixCloud Bot Hosting for Discord, Telegram & WhatsApp"
 sidebarTitle: "Bots"
 description: "Deploy Discord, Telegram, and custom bots on VenixCloud. Keep your bot online 24/7 with managed hosting, logs, and automatic restarts."
 ---
@@ -44,7 +44,7 @@ Set environment variables from the **Environment** tab of your bot service. Chan
 ## Supported Runtimes
 
 | Runtime    | Available Versions |
-|------------|--------------------|
+|------------|-------------------|
 | Node.js    | 18 (LTS), 20 (LTS) |
 | Python     | 3.10, 3.11         |
 
@@ -57,6 +57,17 @@ VenixCloud monitors your bot process continuously. If the process exits unexpect
 ## Logs
 
 Real-time logs for your bot are available directly in the VenixCloud dashboard. Open your bot service and click the **Logs** tab to tail the live output stream, or search and filter historical log entries. For more advanced log management, including log export and alerting, see the [Logs & Monitoring](/management/logs-monitoring) guide.
+
+## API Reference
+
+You can manage your bot services programmatically using the VenixCloud REST API.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/bots` | List all bot services in your account. |
+| `POST` | `/bots` | Create a new bot service. |
+
+For full request and response details, see the [API Reference](/api-reference).
 
 <Tip>
   Ready to ship your first bot? Follow the step-by-step walkthrough in the [Deploy a Bot](/guides/deploy-a-bot) guide to go from zero to a live, online bot in under five minutes.

@@ -1,10 +1,10 @@
 ---
-title: "REST API Endpoints for Services"
+title: "VenixCloud Services API — Manage Hosted Services"
 sidebarTitle: "Services"
-description: "API endpoints to list, create, get, and delete VenixCloud services. Manage all hosted service types through a single unified API."
+description: "List, create, inspect, delete, and deploy VenixCloud hosted services. Every database, bot, website, and custom app is managed as a service."
 ---
 
-The Services API is the central entry point for managing everything you host on VenixCloud. Whether you are running a database, a bot, a website, or a custom application, every hosted resource is represented as a service. You can list all your services, create new ones, inspect an individual service, or permanently delete one — all through the endpoints documented below. All requests must include a valid API key in the `Authorization` header.
+The Services API is the central entry point for managing everything you host on VenixCloud. Whether you are running a database, a bot, a website, or a custom application, every hosted resource is represented as a service. You can list all your services, create new ones, inspect an individual service, trigger a deployment, or permanently delete one — all through the endpoints documented below. All requests must include a valid API key in the `Authorization` header.
 
 ---
 
@@ -22,6 +22,8 @@ curl -X GET https://api.venixcloud.com/v1/services \
 </CodeGroup>
 
 ### Response
+
+**Status: `200 OK`**
 
 ```json
 {
@@ -114,7 +116,7 @@ curl -X POST https://api.venixcloud.com/v1/services \
 
 ```json
 {
-  "id": "svc_xyz789",
+  "id": "svc_abc123",
   "name": "my-node-bot",
   "type": "bot",
   "status": "provisioning",
@@ -125,7 +127,7 @@ curl -X POST https://api.venixcloud.com/v1/services \
 ```
 
 <ResponseField name="id" type="string">
-  The unique identifier for the newly created service.
+  The unique identifier for the newly created service, prefixed with `svc_`.
 </ResponseField>
 <ResponseField name="name" type="string">
   The name you provided in the request body.
@@ -227,7 +229,7 @@ curl -X DELETE https://api.venixcloud.com/v1/services/svc_abc123 \
 ### Path Parameters
 
 <ParamField path="id" type="string" required>
-  The unique ID of the service to delete.
+  The unique ID of the service to delete. Service IDs are prefixed with `svc_`.
 </ParamField>
 
 ### Response
@@ -239,3 +241,66 @@ An empty response body is returned on success. If the service ID does not exist 
 <Note>
   After receiving a `204`, the service entry will no longer appear in the `GET /services` list. Any DNS records or subdomains pointing to the deleted service will stop resolving within a few minutes.
 </Note>
+
+---
+
+## Trigger a Deployment
+
+Manually trigger a new deployment for an existing service. This is useful when you want to redeploy without pushing a new commit — for example, to pick up updated environment variables, apply a configuration change, or re-run a build after a transient infrastructure issue. A new deployment record is created and returned immediately with a `queued` status.
+
+<Note>
+  This endpoint triggers a deployment using the same source code and configuration as the most recent previous deployment. To deploy new code, push a commit to your connected repository instead.
+</Note>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.venixcloud.com/v1/services/svc_abc123/deploy \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</CodeGroup>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique ID of the service to deploy. Service IDs are prefixed with `svc_`.
+</ParamField>
+
+### Response
+
+**Status: `201 Created`**
+
+```json
+{
+  "id": "dep_z1u4y7",
+  "service_id": "svc_abc123",
+  "status": "queued",
+  "logs_url": "https://api.venixcloud.com/v1/deployments/dep_z1u4y7/logs",
+  "started_at": null,
+  "finished_at": null
+}
+```
+
+<ResponseField name="id" type="string">
+  The unique identifier for the newly triggered deployment, prefixed with `dep_`.
+</ResponseField>
+<ResponseField name="service_id" type="string">
+  The ID of the service being deployed.
+</ResponseField>
+<ResponseField name="status" type="string">
+  Always `queued` immediately after the deployment is triggered. Poll `GET /deployments/:id` to track progress.
+</ResponseField>
+<ResponseField name="logs_url" type="string">
+  The URL where build logs will be available once the deployment moves past the `queued` state.
+</ResponseField>
+<ResponseField name="started_at" type="string | null">
+  `null` while the deployment is queued. Updated once a build runner picks it up.
+</ResponseField>
+<ResponseField name="finished_at" type="string | null">
+  `null` until the deployment reaches a terminal state (`running` or `failed`).
+</ResponseField>
+
+<Tip>
+  After triggering a deployment, use `GET /deployments/{id}` on the returned `id` to poll for status changes, or follow the `logs_url` to stream real-time build output.
+</Tip>

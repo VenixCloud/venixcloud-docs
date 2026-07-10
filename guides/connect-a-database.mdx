@@ -12,16 +12,16 @@ If you haven't already provisioned a database, head to [Services → Databases](
 
 ## Step 2 — Get the connection string
 
-Once your database is running, open the service in your Dashboard and navigate to the **Connection Info** tab. VenixCloud generates a ready-to-use connection string for you:
+Once your database is running, open the service in your Dashboard and navigate to the **Connection Info** tab. VenixCloud generates a ready-to-use connection string for you — copy it directly from there, as it contains your actual credentials and hostname.
 
 **PostgreSQL example**
-```
-postgresql://username:password@host.venixcloud.internal:5432/dbname
+```text
+postgresql://username:password@your-db-id.db.venixcloud.app:5432/dbname
 ```
 
 **MySQL example**
-```
-mysql://username:password@host.venixcloud.internal:3306/dbname
+```text
+mysql://username:password@your-db-id.db.venixcloud.app:3306/dbname
 ```
 
 Copy the full connection string — you'll add it to your application in the next step.
@@ -32,7 +32,7 @@ Open your **application service** in the Dashboard and go to the **Environment**
 
 | Key | Value |
 |-----|-------|
-| `DATABASE_URL` | `postgresql://username:password@host.venixcloud.internal:5432/dbname` |
+| `DATABASE_URL` | _(paste the connection string from the Connection Info tab)_ |
 
 For more details on managing environment variables, see the [Environment Variables guide](/management/environment-variables).
 
@@ -83,5 +83,5 @@ Read `DATABASE_URL` from the environment in your application code. Never paste t
 - Enable connection pooling for high-traffic apps to avoid exhausting database connections.
 
 <Note>
-  Services on the same VenixCloud account are connected via a private internal network. You can use the internal hostname (ending in `.venixcloud.internal`) to route traffic between your app and database without it leaving VenixCloud's infrastructure. This is faster and more secure than connecting over the public internet.
+  Services on the same VenixCloud account communicate over a private internal network. When you copy the connection string from the **Connection Info** tab, VenixCloud automatically provides the correct internal hostname so traffic between your app and database stays within VenixCloud's infrastructure — making it faster and more secure than routing over the public internet.
 </Note>

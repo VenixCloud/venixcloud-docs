@@ -1,7 +1,7 @@
 ---
-title: "Frequently Asked Questions about VenixCloud"
+title: "VenixCloud FAQ: Hosting, API, Billing, and Security"
 sidebarTitle: "FAQ"
-description: "Answers to the most common questions about VenixCloud's hosting plans, services, API, uptime guarantees, and data security."
+description: "Answers to the most common questions about VenixCloud hosting plans, services, public REST API, uptime guarantees, and data security practices."
 ---
 
 Whether you're evaluating VenixCloud for the first time or looking for a quick answer about an existing service, this page collects the questions our users ask most often. Browse by topic below, and if you don't see what you're looking for, reach out to support at [suporte@venixcloud.com](mailto:suporte@venixcloud.com).
@@ -36,7 +36,7 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
       The Free plan does not include an SLA guarantee. For production workloads, we recommend the Starter plan or higher to ensure you're covered by the uptime commitment.
     </Note>
 
-    You can monitor live and historical uptime for all VenixCloud systems at our public status page.
+    You can monitor live and historical uptime for all VenixCloud systems at our [public status page](https://status.venixcloud.com).
   </Accordion>
 </AccordionGroup>
 
@@ -53,7 +53,7 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
     | **MongoDB** | 6.0+ |
     | **Redis** | 7.0+ |
 
-    Each database service comes with automated daily backups, one-click restores, and a connection string you can copy directly into your application's environment variables.
+    Each database service comes with automated daily backups, one-click restores, and a connection string you can copy directly into your application's environment variables. See the [Databases service guide](/services/databases) for full setup instructions.
   </Accordion>
 
   <Accordion title="Can I host a Discord bot?">
@@ -62,6 +62,8 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
     <Tip>
       Set your start command to the exact script that launches your bot (e.g. `node index.js` or `python bot.py`) and make sure all dependencies are listed in your `package.json` or `requirements.txt` so they're installed automatically on each deploy.
     </Tip>
+
+    For more details, see the [Bots service guide](/services/bots).
   </Accordion>
 
   <Accordion title="Can I use Docker?">
@@ -73,7 +75,7 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
   <Accordion title="Do I get a free subdomain?">
     Yes. Every website or web application you deploy automatically receives a free subdomain in the format:
 
-    ```
+    ```text
     yourapp.venixcloud.app
     ```
 
@@ -105,6 +107,8 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
     <Note>
       Treat your API key like a password. Store it in a secrets manager or as an environment variable, and never commit it to a public repository.
     </Note>
+
+    For details on using the key in requests, see the [Authentication guide](/api-reference/authentication).
   </Accordion>
 
   <Accordion title="Is there a rate limit on the API?">
@@ -123,7 +127,7 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
 
 <AccordionGroup>
   <Accordion title="Can I cancel at any time?">
-    Yes. VenixCloud has no lock-in contracts. You can cancel any service or your entire account at any time from **Settings → Plan**.
+    Yes. VenixCloud has no lock-in contracts. You can cancel any service or your entire account at any time from [Settings → Plan](/plans-billing).
 
     When you cancel, your services remain active until the end of the current billing period. After that, they are permanently deleted. Make sure to **export any data** (databases, logs) before the billing period ends.
   </Accordion>
@@ -135,7 +139,7 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
   </Accordion>
 
   <Accordion title="Are there discounts for annual billing?">
-    Yes. Switching to an annual subscription gives you **2 months free** — effectively a ~17% discount compared to paying monthly. You can switch to annual billing at any time from **Settings → Plan**.
+    Yes. Switching to an annual subscription gives you **2 months free** — effectively a ~17% discount compared to paying monthly. You can switch to annual billing at any time from [Settings → Plan](/plans-billing).
 
     <Tip>
       Annual billing is charged upfront for the full year. If you cancel mid-year and are within the 7-day refund window from your most recent charge, you may be eligible for a prorated refund — contact support for details.
@@ -151,15 +155,13 @@ Whether you're evaluating VenixCloud for the first time or looking for a quick a
 
     - **At rest** — all disks and database volumes are encrypted using AES-256. This protects your data if physical media is ever compromised.
     - **In transit** — all connections to VenixCloud services are encrypted with TLS 1.2 or higher. Free TLS certificates are provisioned automatically for all hosted websites and APIs.
-
-    Internal service-to-service communication within the VenixCloud infrastructure also runs over encrypted channels.
   </Accordion>
 
   <Accordion title="Can I export my data?">
     Yes. You can export your data at any time directly from the dashboard:
 
-    - **Databases** — go to your database service and click **Export** to download a full SQL or BSON dump, depending on the engine.
-    - **Application files** — connect via the VenixCloud CLI or use the API to pull your deployed file system.
+    - **Databases** — go to your [database service](/services/databases) and click **Export** to download a full SQL or BSON dump, depending on the engine.
+    - **Application files** — connect via the VenixCloud CLI or use the [API](/api-reference/introduction) to pull your deployed file system.
 
     We recommend setting up regular exports or using the API to automate backups to your own storage bucket for critical data.
   </Accordion>

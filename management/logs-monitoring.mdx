@@ -1,5 +1,5 @@
 ---
-title: "Logs and Monitoring on VenixCloud"
+title: "VenixCloud Service Logs and Performance Monitoring"
 sidebarTitle: "Logs & Monitoring"
 description: "Access real-time logs and resource usage metrics for your VenixCloud services. Debug issues and track performance from the dashboard or API."
 ---
@@ -96,17 +96,19 @@ You can pass optional query parameters to scope the results:
 
 Every running service exposes live and historical resource graphs under the **Metrics** tab in the service detail view.
 
-<Card title="CPU Usage" icon="microchip">
-  Displays percentage utilization of the allocated CPU over time. Sustained usage above 80% is a signal to scale up your plan or optimize your application.
-</Card>
+<CardGroup cols={3}>
+  <Card title="CPU Usage" icon="microchip">
+    Displays percentage utilization of the allocated CPU over time. Sustained usage above 80% is a signal to scale up your plan or optimize your application.
+  </Card>
 
-<Card title="RAM Usage" icon="memory">
-  Shows current and peak memory consumption against your plan's allocation. Services that exceed their memory limit are automatically restarted.
-</Card>
+  <Card title="RAM Usage" icon="memory">
+    Shows current and peak memory consumption against your plan's allocation. Services that exceed their memory limit are automatically restarted.
+  </Card>
 
-<Card title="Network I/O" icon="network-wired">
-  Tracks inbound and outbound bytes per second. Useful for identifying unexpected traffic spikes or data-intensive operations.
-</Card>
+  <Card title="Network I/O" icon="network-wired">
+    Tracks inbound and outbound bytes per second. Useful for identifying unexpected traffic spikes or data-intensive operations.
+  </Card>
+</CardGroup>
 
 Metrics are displayed at 30-second resolution for the last hour and roll up to 5-minute averages for the previous 7 days. You can hover any point on a graph to see the exact value at that moment.
 

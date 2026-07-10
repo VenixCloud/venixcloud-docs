@@ -1,7 +1,7 @@
 ---
-title: "Custom Application Hosting on VenixCloud"
+title: "Host Custom Applications and Docker Workloads on VenixCloud"
 sidebarTitle: "Custom Apps"
-description: "Host any custom application on VenixCloud. Supports Node.js, Python, Go, Java, and Docker-based workloads with full environment control."
+description: "Host any custom application on VenixCloud using Node.js, Python, Go, Java, or Docker. Full environment control with no infrastructure overhead."
 ---
 
 VenixCloud's Custom App service gives you the flexibility to host virtually any workload that doesn't fit neatly into the Bot or Website categories. Whether you're running a background worker, a gRPC microservice, a scheduled job processor, or a containerised application with a custom runtime, Custom Apps give you full control over the execution environment, networking, and resource allocation — without the overhead of managing your own infrastructure.
@@ -45,18 +45,18 @@ Choose a managed runtime for zero-configuration dependency installation, or brin
 
 VenixCloud routes external traffic to your application using the port you specify during setup. Your application **must** listen on the port provided by the `PORT` environment variable — do not hardcode a port number in your source code. VenixCloud injects the correct value at runtime.
 
-```bash
-# Example: reading PORT in a Node.js app
+<CodeGroup>
+```javascript Node.js
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 ```
 
-```python
-# Example: reading PORT in a Python/FastAPI app
+```python Python (FastAPI)
 import os
 port = int(os.environ.get("PORT", 8000))
 uvicorn.run(app, host="0.0.0.0", port=port)
 ```
+</CodeGroup>
 
 If your application does not bind to the expected port within 60 seconds of startup, VenixCloud will mark the deploy as failed and roll back to the previous healthy version.
 
@@ -97,3 +97,14 @@ To upgrade, go to your service's **Settings > Plan** and select a higher tier. R
 <Note>
   The local filesystem inside a Custom App container is **ephemeral** — any files written at runtime are lost when the service restarts or redeploys. If your application needs to persist data between restarts (uploads, generated files, databases), store them in a VenixCloud [Database](/services/databases) or an external object storage service. Persistent volume mounts are available on Pro plans and above.
 </Note>
+
+## API Reference
+
+You can manage your custom app services programmatically using the VenixCloud REST API.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/services` | List all services in your account. |
+| `POST` | `/services` | Create a new service. |
+
+For full request and response details, see the [API Reference](/api-reference).

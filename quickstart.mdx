@@ -1,14 +1,14 @@
 ---
-title: "Get Started with VenixCloud in Minutes"
+title: "VenixCloud Quickstart: Deploy Your First Service"
 sidebarTitle: "Quickstart"
-description: "Learn how to create your first service on VenixCloud — deploy a database, bot, or website in under five minutes."
+description: "Create your VenixCloud account, deploy a database, bot, or website in minutes, and make your first REST API call with step-by-step instructions."
 ---
 
 VenixCloud is a cloud hosting platform that lets you deploy and manage databases, bots, websites, and custom applications from a single dashboard. Whether you're spinning up a PostgreSQL instance, hosting a Discord bot, or launching a production web app, this guide walks you through every step — from creating your account to making your first API call.
 
 <Steps>
   <Step title="Create your account">
-    Head to [venixcloud.com](https://venixcloud.com) and click **Sign Up**. Enter your name, email address, and a secure password. After submitting the form, check your inbox for a verification email and click the confirmation link to activate your account.
+    Head to [venixcloud.io](https://venixcloud.io) and click **Sign Up**. Enter your name, email address, and a secure password. After submitting the form, check your inbox for a verification email and click the confirmation link to activate your account.
   </Step>
 
   <Step title="Access the dashboard">
@@ -43,16 +43,101 @@ VenixCloud is a cloud hosting platform that lets you deploy and manage databases
   Free plan accounts are limited to **1 active service**, **256 MB of RAM**, and **1 GB of storage**. Your service will be automatically paused after **30 minutes of inactivity**. Upgrade to a paid plan at any time to remove these limits and keep your services running continuously.
 </Note>
 
-## Your first API call
+## Your first API calls
 
-With your API key in hand, you can interact with VenixCloud programmatically. The example below retrieves a list of all services associated with your account:
+With your API key in hand, you can interact with VenixCloud programmatically. The examples below demonstrate the most common operations across every resource type. Replace `YOUR_API_KEY` with the key you generated in Step 6.
+
+### Services
+
+Use the `/services` endpoints to list, create, inspect, deploy, and delete your services.
 
 ```bash
-curl -X GET https://api.venixcloud.com/v1/services \
+# List all services
+curl -X GET https://api.venixcloud.io/v1/services \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Create a new service
+curl -X POST https://api.venixcloud.io/v1/services \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-app", "type": "custom", "region": "us-east-1"}'
+
+# Get a specific service by ID
+curl -X GET https://api.venixcloud.io/v1/services/{id} \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Trigger a deployment for a service
+curl -X POST https://api.venixcloud.io/v1/services/{id}/deploy \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Delete a service
+curl -X DELETE https://api.venixcloud.io/v1/services/{id} \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Replace `YOUR_API_KEY` with the key you generated in Step 6. A successful response returns a JSON array of your service objects, each containing the service ID, name, type, status, and endpoint. You can use the REST API to create, configure, restart, and delete services without ever opening the dashboard.
+### Databases
+
+Use the `/databases` endpoints to manage your managed database instances.
+
+```bash
+# List all databases
+curl -X GET https://api.venixcloud.io/v1/databases \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Create a new database
+curl -X POST https://api.venixcloud.io/v1/databases \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-db", "engine": "postgresql", "region": "us-east-1"}'
+```
+
+### Bots
+
+Use the `/bots` endpoints to manage your hosted bots.
+
+```bash
+# List all bots
+curl -X GET https://api.venixcloud.io/v1/bots \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Create a new bot
+curl -X POST https://api.venixcloud.io/v1/bots \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-discord-bot", "region": "us-east-1"}'
+```
+
+### Websites
+
+Use the `/websites` endpoints to manage your hosted websites and web apps.
+
+```bash
+# List all websites
+curl -X GET https://api.venixcloud.io/v1/websites \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Create a new website
+curl -X POST https://api.venixcloud.io/v1/websites \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-site", "region": "us-east-1"}'
+```
+
+### Deployments
+
+Use the `/deployments` endpoints to track build and deployment history.
+
+```bash
+# List all deployments
+curl -X GET https://api.venixcloud.io/v1/deployments \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Get details for a specific deployment
+curl -X GET https://api.venixcloud.io/v1/deployments/{id} \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+A successful response for any list endpoint returns a JSON array of objects. Each object includes the resource ID, name, type, status, region, and relevant endpoint or connection string. You can use these endpoints to build CI/CD pipelines, automate scaling, and manage your entire infrastructure without opening the dashboard.
 
 ## Explore by service type
 

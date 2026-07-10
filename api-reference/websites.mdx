@@ -1,7 +1,7 @@
 ---
-title: "REST API Endpoints for Websites"
+title: "VenixCloud Websites API — Deploy and List Websites"
 sidebarTitle: "Websites"
-description: "API endpoints to list and create website services on VenixCloud. Deploy static sites and web apps and get your subdomain URL."
+description: "List and create website services on VenixCloud. Deploy static sites and dynamic web apps with a free TLS subdomain and optional custom domain support."
 ---
 
 The Websites API enables you to deploy and manage web-facing services on VenixCloud, from simple static HTML pages to full-stack Node.js, PHP, and Python web applications. Every website you create receives a free `venixcloud.com` subdomain with TLS automatically configured. You can also attach a custom domain through the VenixCloud dashboard after deployment. All requests require a valid API key in the `Authorization` header.
@@ -29,7 +29,7 @@ curl -X GET https://api.venixcloud.com/v1/websites \
 {
   "data": [
     {
-      "id": "web_n7s3c6",
+      "id": "web_ghi789",
       "name": "landing-page",
       "type": "static",
       "url": "https://landing-page.venixcloud.com",
@@ -37,7 +37,7 @@ curl -X GET https://api.venixcloud.com/v1/websites \
       "custom_domain": "www.mycompany.com"
     },
     {
-      "id": "web_b2h9p4",
+      "id": "web_abc123",
       "name": "api-dashboard",
       "type": "nodejs",
       "url": "https://api-dashboard.venixcloud.com",
@@ -151,7 +151,7 @@ curl -X POST https://api.venixcloud.com/v1/websites \
 
 ```json
 {
-  "id": "web_n7s3c6",
+  "id": "web_ghi789",
   "name": "landing-page",
   "type": "static",
   "url": "https://landing-page.venixcloud.com",

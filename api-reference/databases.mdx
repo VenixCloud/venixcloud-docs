@@ -1,7 +1,7 @@
 ---
-title: "REST API Endpoints for Databases"
+title: "VenixCloud Databases API — List and Create Databases"
 sidebarTitle: "Databases"
-description: "API endpoints to list and create database services on VenixCloud. Supports MySQL, PostgreSQL, MongoDB, and Redis."
+description: "List and create fully hosted database services on VenixCloud. Supports MySQL, PostgreSQL, MongoDB, and Redis with automatic connection strings."
 ---
 
 The Databases API lets you provision and manage fully hosted database services on VenixCloud. You can spin up a MySQL, PostgreSQL, MongoDB, or Redis instance in seconds without managing any underlying infrastructure. VenixCloud automatically generates a ready-to-use connection string and handles availability, backups, and scaling for you. All requests require a valid API key passed in the `Authorization` header.
@@ -29,20 +29,20 @@ curl -X GET https://api.venixcloud.com/v1/databases \
 {
   "data": [
     {
-      "id": "db_k9m2x1",
+      "id": "db_xyz789",
       "name": "production-postgres",
       "engine": "postgresql",
       "version": "15",
       "status": "running",
-      "connection_string": "postgresql://admin:password@db-k9m2x1.venixcloud.com:5432/appdb"
+      "connection_string": "postgresql://admin:****@db-xyz789.venixcloud.com:5432/appdb"
     },
     {
-      "id": "db_r3t7z8",
+      "id": "db_abc123",
       "name": "cache-redis",
       "engine": "redis",
       "version": "7.2",
       "status": "running",
-      "connection_string": "redis://:password@db-r3t7z8.venixcloud.com:6379"
+      "connection_string": "redis://:****@db-abc123.venixcloud.com:6379"
     }
   ],
   "total": 2
@@ -69,7 +69,7 @@ curl -X GET https://api.venixcloud.com/v1/databases \
       The current operational state. One of `running`, `stopped`, `provisioning`, or `failed`.
     </ResponseField>
     <ResponseField name="connection_string" type="string">
-      The fully formed connection URI you can use directly in your application code or database client.
+      The fully formed connection URI you can use directly in your application code or database client. The password is masked in subsequent GET responses.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -122,7 +122,7 @@ curl -X POST https://api.venixcloud.com/v1/databases \
 </ParamField>
 
 <ParamField body="region" type="string" required>
-  The region where the database will be hosted. Accepted values are `sa-east-1` and `us-east-1`.
+  The region where the database will be hosted. Accepted values are `sa-east-1` (São Paulo) and `us-east-1` (North Virginia).
 </ParamField>
 
 <ParamField body="db_name" type="string">
@@ -143,7 +143,7 @@ curl -X POST https://api.venixcloud.com/v1/databases \
 
 ```json
 {
-  "id": "db_k9m2x1",
+  "id": "db_xyz789",
   "name": "production-postgres",
   "engine": "postgresql",
   "version": "15",
@@ -151,7 +151,7 @@ curl -X POST https://api.venixcloud.com/v1/databases \
   "region": "sa-east-1",
   "db_name": "appdb",
   "username": "admin",
-  "connection_string": "postgresql://admin:s3cur3P@ssword!@db-k9m2x1.venixcloud.com:5432/appdb",
+  "connection_string": "postgresql://admin:s3cur3P@ssword!@db-xyz789.venixcloud.com:5432/appdb",
   "created_at": "2024-03-12T14:00:00Z"
 }
 ```
@@ -175,13 +175,13 @@ curl -X POST https://api.venixcloud.com/v1/databases \
   The region the database was deployed to.
 </ResponseField>
 <ResponseField name="db_name" type="string">
-  The name of the initial database or collection created.
+  The name of the initial database or collection created inside the instance.
 </ResponseField>
 <ResponseField name="username" type="string">
   The primary database user created alongside the instance.
 </ResponseField>
 <ResponseField name="connection_string" type="string">
-  The fully formed connection URI ready for use in your application. Save this value securely.
+  The fully formed connection URI ready for use in your application. Save this value securely — the password portion will be masked in future GET responses.
 </ResponseField>
 <ResponseField name="created_at" type="string">
   ISO 8601 timestamp of when the database service was created.

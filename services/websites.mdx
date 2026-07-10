@@ -1,7 +1,7 @@
 ---
-title: "Website Hosting on VenixCloud"
+title: "Host Static Sites and Web Applications on VenixCloud"
 sidebarTitle: "Websites"
-description: "Host static sites and dynamic web applications on VenixCloud. Get a free subdomain, SSL certificate, and optional custom domain."
+description: "Host static sites and dynamic web applications on VenixCloud. Get a free subdomain, automatic SSL certificate, and optional custom domain support."
 ---
 
 VenixCloud gives you a fast, reliable home for every kind of web project — from a simple static landing page to a full-stack dynamic application. Connect your GitHub repository or upload your files, configure a build command if needed, and VenixCloud deploys your site with a free subdomain and HTTPS enabled by default. No reverse proxy configuration, no certificate renewal, no server maintenance required.
@@ -66,6 +66,17 @@ Use the table below as a reference for common frameworks. All values are set in 
 | Plain HTML/CSS | —                      | `.` (root)       | —                         |
 | Django         | `pip install -r requirements.txt` | — | `gunicorn myapp.wsgi`   |
 | Laravel        | `composer install`     | `public`         | —                         |
+
+## API Reference
+
+You can manage your website services programmatically using the VenixCloud REST API.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/websites` | List all website services in your account. |
+| `POST` | `/websites` | Create a new website service. |
+
+For full request and response details, see the [API Reference](/api-reference).
 
 <Tip>
   Looking for a detailed walkthrough? The [Deploy Your First Website](/guides/deploy-a-website) guide takes you step-by-step through deploying a Next.js app with a custom domain and environment variables.
